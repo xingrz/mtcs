@@ -1,30 +1,38 @@
 -- deps
 
 local event = require("event")
+local eventbus = require("eventbus")
 
 local signal = require("signal")
 
-local addresses = require("mapping").load("/mtcs/mapping/04taojin")
+local devices = require("devices").load("/mtcs/devices/04taojin")
 
 print("Minecraft 计算机列控系统 2.0")
 print("===========================================\n")
 
-function show(...)
-    local string = ""
+eventbus.on(devices.DETECTOR_X, "minecart", function(detector, type, en, pc, sc, number, o)
+  print("detected minecart " .. owner)
+end)
 
-    local args = table.pack(...)
+eventbus.on(devices.R_S0406, "aspect_changed", function(receiver, aspect)
+end)
 
-    for i = 1, args.n do
-        string = string .. tostring(args[i]) .. "\t"
-    end
-
-    return string
-end
-
-function handle(...)
-  print('evt:' .. show(...))
-end
+-- function show(...)
+--     local string = ""
+--
+--     local args = table.pack(...)
+--
+--     for i = 1, args.n do
+--         string = string .. tostring(args[i]) .. "\t"
+--     end
+--
+--     return string
+-- end
+--
+-- function handle(...)
+--   print('evt:' .. show(...))
+-- end
 
 while true do
-  handle(event.pull())
+  eventbus.handle(event.pull())
 end

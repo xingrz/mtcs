@@ -1,6 +1,6 @@
-local mapping = {}
+local devices = {}
 
-function mapping.load(file)
+function devices.load(file)
   local result = {}
 
   local f = io.open(file)
@@ -14,4 +14,4 @@ function mapping.load(file)
   return result
 end
 
-return mapping
+return devices

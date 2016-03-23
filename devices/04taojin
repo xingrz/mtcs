@@ -14,7 +14,6 @@ redstone                a59fbe5a-c70a-41b3-b8cb-ed6eae5610a7    W0404
 redstone                9e3061e6-ab18-4f92-8551-722dc3dff27f    W0406
 redstone                0cae6799-068e-4398-aaa5-d3966315b339    W0408
 
-
 digital_detector        f307e6d7-28ac-4432-9c45-1db9f409f80e    DETECTOR_S
 redstone                57aa7021-c929-4ed3-a465-c5e1f7c5baac    TIMER_S
 redstone                a48a59d9-218f-4f45-b072-dbeed8a992ef    LOCK_S
@@ -24,7 +23,6 @@ digital_detector        97680f9c-867d-46b8-9d18-86ef87d8b47c    DETECTOR_X
 redstone                2279f3ca-3547-4bff-a701-585cf83b4472    TIMER_X
 redstone                dfdb0a15-b889-45a7-a085-fbc8c1c31571    LOCK_X
 redstone                ddd73d29-3930-4d27-ad1c-bb27eb62dde6    DOOR_X
-
 
 digital_detector        273b12e0-4a1d-4284-9547-eaa48614462d    DETECTOR_K
 redstone                6b48d334-1c19-49bb-999d-cc7e9a5be11e    LOCK_K
