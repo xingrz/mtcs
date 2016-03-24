@@ -5,7 +5,7 @@ function devices.load(file)
 
   local f = io.open(file)
 
-  for address, name in string.gmatch(f:read("*a"), "[^ ]+[ ]+([^ ]+)[ ]+([^ ]+)\n") do
+  for address, name in string.gmatch(f:read("*a"), "[^ ]+[ ]+([^ ]+)[ ]+([^ \n]+)\n") do
     result[name] = address
   end
 

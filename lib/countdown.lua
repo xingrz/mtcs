@@ -1,57 +1,65 @@
 local event = require("event")
 local segment = require("segment")
+local component = require("component")
 
-local countdown = { number = 0 }
+local countdown = {}
+countdown.__index = countdown
 
-local _timer = nil
-local _side
-local _duration
+function countdown.bind(address, duration, callback)
+  local self = setmetatable({}, countdown)
 
-function countdown.init(side, duration)
-  _side = side
-  _duration = duration
+  if (component.type(address) ~= "redstone") then
+    print("countdown should be bound to a redstone component")
+    return nil
+  end
 
-  segment.put(_side, 11)
-  os.sleep(0.5)
-  segment.put(_side, 25)
-  os.sleep(0.5)
-  segment.put(_side, 88)
-  os.sleep(0.5)
-  segment.clear(_side)
+  self.remains = 0
+  self.timer = nil
+  self.duration = duration
+  self.callback = callback
+
+  self.segment = segment.bind(address)
+  self.segment:clear()
+
+  return self
 end
 
-function countdown.start(callback)
-  countdown.number = _duration
-  _update()
+function countdown.start(self)
+  self.remains = self.duration
+  self._update(self)
 
-  _timer = event.timer(1, function()
-    _tick()
-    _update()
-    countdown.go(callback)
+  self._timer = event.timer(1, function()
+    self._tick(self)
+    self._update(self)
+    self.go(self)
   end, 115)
 end
 
-function countdown.stop()
-  if (_timer ~= nil) then
-    event.cancel(_timer)
-    _timer = nil
+function countdown.stop(self)
+  if (self._timer ~= nil) then
+    event.cancel(self._timer)
+    self._timer = nil
   end
 
-  segment.clear(_side)
+  self.segment:clear()
 end
 
-function countdown.go(callback)
-  if (countdown.number <= 0) then
-    callback(-countdown.number)
+function countdown.go(self)
+  if (self.timer ~= nil and self.remains <= 0) then
+    self.stop(self)
+    self.callback(-self.remains)
+    print("到点发车")
+  else
+    print("未到点")
   end
 end
 
-function _tick()
-  countdown.number = countdown.number - 1
+function countdown._tick(self)
+  self.remains = self.remains - 1
 end
 
-function _update()
-  segment.put(_side, math.abs(countdown.number))
+function countdown._update(self)
+  self.segment:put(math.abs(self.remains))
 end
 
 return countdown
