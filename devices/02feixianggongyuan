@@ -1,8 +1,8 @@
-digital_receiver_box    0120d3e8-78f4-46f3-89cb-ca906e799ec6  S0201
-digital_receiver_box    16738bd9-795e-4c68-9765-21c06e906a07  S0202
+digital_receiver_box    d1ac0423-fe54-4fcc-8392-3b3be0df1068  S0201
+digital_receiver_box    31cb604e-59e4-48d3-bb7d-b3ecb8e012b1  S0202
 
-digital_receiver_box    dcba7570-2cff-4f0c-b706-0505589c98ee  X0203
-digital_receiver_box    527ba80f-a3d7-479d-ac55-127ff7d6906b  X0204
+digital_receiver_box    bf7d74c9-a83d-4be7-8249-0299033f6e61  X0203
+digital_receiver_box    0211c19d-e366-491d-bb41-7b4b499076cf  X0204
 
 redstone                bba2a83c-39c3-49a2-8603-0eec863f7809  LOCK_S0201
 redstone                8a64db96-505c-4ecb-81b7-791738ccedfe  LOCK_S0202

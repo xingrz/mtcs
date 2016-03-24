@@ -50,7 +50,7 @@ function countdown.go(self)
     self.callback(-self.remains)
     print("到点发车")
   else
-    print("未到点")
+    print("未到点" .. tostring(self.timer ~= nil) .. self.remains)
   end
 end
 
