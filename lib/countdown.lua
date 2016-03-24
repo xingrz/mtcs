@@ -45,12 +45,9 @@ function countdown.stop(self)
 end
 
 function countdown.go(self)
-  if (self.timer ~= nil and self.remains <= 0) then
+  if (self._timer ~= nil and self.remains <= 0) then
     self.stop(self)
     self.callback(-self.remains)
-    print("到点发车")
-  else
-    print("未到点" .. tostring(self.timer ~= nil) .. self.remains)
   end
 end
 

@@ -6,7 +6,6 @@ function load(train)
   local f = io.open("/mtcs/routes/" .. string.sub(train, 4, 6))
 
   for code in string.gmatch(f:read("*a"), "(%d+%u)[ ]*[^ \n]*\n") do
-    print(os.date() .. " " .. train .. " 停靠 " .. code)
     table.insert(result, code)
   end
 
