@@ -1,37 +1,32 @@
 -- deps
 
 local event = require("event")
-local eventbus = require("eventbus")
 
+local countdown = require("countdown")
+local eventbus = require("eventbus")
+local digital = require("digital")
 local signal = require("signal")
 
 local devices = require("devices").load("/mtcs/devices/04taojin")
 
+local routes = require("routes")
+
 print("Minecraft 计算机列控系统 2.0")
 print("===========================================\n")
 
-eventbus.on(devices.DETECTOR_X, "minecart", function(detector, type, en, pc, sc, number, o)
-  print("detected minecart " .. owner)
-end)
+local STATION_CODE = "04"
+local DURATION = 10
 
-eventbus.on(devices.R_S0406, "aspect_changed", function(receiver, aspect)
-end)
+eventbus.on(devices.DETECTOR_S0402, "minecart", function(d, t, n, p, s, number, o)
+  if (number == nil) then
+    return
+  end
 
--- function show(...)
---     local string = ""
---
---     local args = table.pack(...)
---
---     for i = 1, args.n do
---         string = string .. tostring(args[i]) .. "\t"
---     end
---
---     return string
--- end
---
--- function handle(...)
---   print('evt:' .. show(...))
--- end
+  -- 如果折返
+  if (routes.stops(number, STATION_CODE .. "X")) then
+    print(os.date() .. " " .. number .. " 准备折返")
+  end
+end)
 
 while true do
   eventbus.handle(event.pull())

@@ -1,0 +1,18 @@
+digital_receiver_box    46aee6b9-9303-4a1a-ac03-6a0f29810a93  S0301
+digital_receiver_box    349bad15-3d62-48a3-afb7-7ced9259a2a0  S0302
+digital_receiver_box    57efdc4b-1c50-41ab-86d7-7f942a504e02  X0303
+digital_receiver_box    364c62a6-75e0-4765-841a-e00ff748c3e1  X0304
+
+redstone                6685d02a-c55a-4a58-821c-fd86f0a68394  LOCK_S0301
+redstone                9f12fcdf-6f01-4473-b691-f841f14b5931  LOCK_S0302
+redstone                74035664-8540-48a2-bd6e-a7e1328f978e  LOCK_X0303
+redstone                c4e1f34d-ac61-47a4-87af-5bcbca3a5f61  LOCK_X0304
+
+redstone                6fb42183-75ea-4a76-928c-f2b9b189e769  COUNTDOWN_S
+redstone                9962a77f-3363-4705-9b6f-0a9e40414f5c  COUNTDOWN_X
+
+digital_detector        b3f99557-d1f7-46aa-bd20-ffc3a8b6433e  DETECTOR_S
+digital_detector        e366dcf1-0c1d-4ba3-9cc5-812506021590  DETECTOR_X
+
+redstone                74b29265-6222-4938-87aa-c04d674e782e  DOOR_X
+redstone                88a85872-7ba3-4c01-8ea3-4a6874af1564  DOOR_S
