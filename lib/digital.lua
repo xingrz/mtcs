@@ -15,4 +15,12 @@ function digital.set(address, on)
   component.proxy(address).setOutput(sides.top, value)
 end
 
+function digital.i(address)
+  return component.proxy(address).getInput(sides.top) > 0
+end
+
+function digital.o(address)
+  return component.proxy(address).getOutput(sides.top) > 0
+end
+
 return digital

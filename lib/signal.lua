@@ -1,4 +1,5 @@
 local component = require("component")
+local sides = require("sides")
 
 local signal = { aspects = component.digital_receiver_box.aspects, listeners = {} }
 
@@ -18,6 +19,14 @@ function signal.get(address)
 end
 
 function signal.set(address, aspect)
+  local controller = component.proxy(address)
+  if (aspect == signal.aspects.green) then
+    controller.setOutput(sides.top, 10)
+  elseif (aspect == signal.aspects.yellow) then
+    controller.setOutput(sides.top, 5)
+  else
+    controller.setOutput(sides.top, 0)
+  end
 end
 
 function signal.color(aspect)
