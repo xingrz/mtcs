@@ -1,3 +1,5 @@
+local computer = require("computer")
+local keyboard = require("keyboard")
 local component = require("component")
 
 local eventbus = { listeners = {} }
@@ -21,5 +23,15 @@ function eventbus.on(address, event, listener)
 
   eventbus.listeners[address][event] = listener
 end
+
+eventbus.on(component.computer.address, "component_available", function(c, type)
+  if (type == "keyboard") then
+    eventbus.on(component.keyboard.address, "key_up", function(k, char, code, p)
+      if (keyboard.isAltDown() and code == keyboard.keys.r) then
+        computer.shutdown(true)
+      end
+    end)
+  end
+end)
 
 return eventbus
