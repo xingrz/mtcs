@@ -19,6 +19,8 @@ local DURATION = 10
 
 local s0402 = 0  -- S0402 进路：0 未开通，1 正线，2 侧线
 
+digital.set(devices.LOCK_S0402, signal.get(devices.S0402) == signal.aspects.green)
+
 eventbus.on(devices.DETECTOR_S0402, "minecart", function(d, t, n, p, s, number, o)
   if (number == nil) then
     return
@@ -79,7 +81,7 @@ eventbus.on(devices.S0402, "aspect_changed", function(r, aspect)
   if (s0402 == 1) then
     signal.set(devices.C_S0402, aspect)
     if (aspect == signal.aspects.green) then
-      print(os.date() .. " " .. number .. " 准备进入上行站台")
+      print(os.date() .. " 列车准备进入上行站台")
       digital.set(devices.LOCK_S0402, true)
     end
   end
@@ -89,7 +91,7 @@ eventbus.on(devices.S0402B, "aspect_changed", function(r, aspect)
   if (s0402 == 2) then
     signal.set(devices.C_S0402, aspect)
     if (aspect == signal.aspects.green) then
-      print(os.date() .. " " .. number .. " 准备进入存车线")
+      print(os.date() .. " 列车准备进入存车线")
       digital.set(devices.W0402, true)
       digital.set(devices.W0404, true)
       digital.set(devices.LOCK_S0402, true)

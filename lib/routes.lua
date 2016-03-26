@@ -5,6 +5,10 @@ function load(train)
 
   local f = io.open("/mtcs/routes/" .. string.sub(train, 4, 6))
 
+  if (f == nil) then
+    return {}
+  end
+
   for code in string.gmatch(f:read("*a"), "(%d+%u)[ ]*[^ \n]*\n") do
     table.insert(result, code)
   end
