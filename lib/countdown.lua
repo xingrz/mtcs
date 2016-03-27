@@ -25,6 +25,8 @@ function countdown.bind(address, duration, callback)
 end
 
 function countdown.start(self)
+  self.stop(self)
+
   self.remains = self.duration
   self._update(self)
 
