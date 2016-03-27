@@ -1,0 +1,44 @@
+digital_receiver_box    8e8acb68-3b1e-43ba-a222-b98d7e6b0693    S0101
+
+digital_receiver_box    26f9a277-e1c9-48f7-94ec-844112627180    S0102
+digital_receiver_box    cee10fef-b984-4733-bb08-4941cc18efc2    S0102B
+redstone                22f49b94-88c3-4b73-ba86-3f2a0da312ca    C_S0102
+
+digital_receiver_box    b3e41d1d-2fb9-40e7-be1b-49670aea0298    X0103
+
+redstone                bf98b9c1-5601-4481-90e8-387c71efde79    C_S0106
+
+digital_receiver_box    9b65c08e-36e9-41ab-9f7c-2a3eceec7f60    X0108
+digital_receiver_box    8cf1292c-be7a-49cd-a3c4-f3cb7666512c    X0108B
+redstone                379a514a-3ecf-464a-8439-d988f9f97af0    C_X0108
+
+redstone                27de0e8d-373d-48a2-aeef-eb23c4402483    LOCK_X0104
+digital_detector        77e5001a-1ead-4734-a026-520abf351350    DETECTOR_X0104
+
+redstone                5e2a6ceb-dbe2-4827-8b4e-fea276499718    LOCK_S0106
+digital_detector        07469cd0-cafc-4a24-ae5a-0e75cc2d62d5    DETECTOR_S0106
+
+redstone                b73e05f7-650f-4377-9aa3-ce469baed532    CONTROL_R
+
+redstone                dead160d-740d-4bc1-a8b5-f1dd2a9a5914    W0102
+redstone                1987f9be-ef40-47bc-bb1a-c52f7f45d4e6    W0104
+
+redstone                119db3c0-7e92-4090-900b-9ceb595c594e    W0106
+redstone                a4b5c1ec-14f5-4d10-aa7f-f5c973a85f19    W0108
+
+redstone                90a3b2c9-b75c-436c-b44e-95ff895c8433    W0110
+redstone                c589b6f1-7e8e-47ae-96db-e98c3f11a917    W0112
+
+redstone                6da0f454-20fb-4e95-9dfd-ed3f94fdc586    LOCK_S0101
+redstone                fc8d39ee-67b2-4121-abe2-205f7c63120c    LOCK_S0102
+
+redstone                6117a51d-13e5-47e4-b0a9-32b9d134dad2    COUNTDOWN_S
+digital_detector        3f55a8ea-fbbe-4ad1-b35f-e5a039a1158e    DETECTOR_S
+redstone                a9e17a8a-2c72-4946-9488-351628e2a0b0    DOOR_S
+
+redstone                0d8dbcd9-c03a-4f21-b801-b5d302ac9dcd    LOCK_X0103
+redstone                52e7811e-bdfd-4baa-bb00-7eb1e5576ce2    LOCK_X0108
+
+redstone                d1fd83ac-6b6b-4444-a0fa-20e3d7ff1e0d    COUNTDOWN_X
+digital_detector        3c40608b-c441-4e2f-ab49-ca197552bb0d    DETECTOR_X
+redstone                824245ab-7eda-4017-8ad2-1cf5cacd5a94    DOOR_X
