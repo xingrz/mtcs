@@ -19,6 +19,90 @@ print("===========================================\n")
 local STATION_CODE = "01"
 local DURATION = 10
 
+-- X0108B 进路
+
+local X0108B = { state = 0, number = nil }
+
+function X0108B.layout()
+  -- 封锁 S0102
+  digital.set(devices.LOCK_S0102, false)
+  signal.set(devices.C_S0102, signal.aspects.red)
+
+  -- 排列 X0108
+  digital.set(devices.LOCK_S0106, true)
+  digital.set(devices.LOCK_X0104, false)
+
+  digital.set(devices.CONTROL_R, true)
+
+  digital.set(devices.W0106, true)
+  digital.set(devices.W0108, true)
+
+  -- 排列完成
+  signal.set(devices.C_X0108, signal.aspects.green)
+
+  chat.say("下行进折返线进路排列完成")
+end
+
+function X0108B.open()
+  digital.set(devices.LOCK_X0108, true)
+
+  chat.say("下行进折返线进路开放")
+end
+
+function X0108B.reset()
+  digital.set(devices.LOCK_X0108, false)
+
+  signal.set(devices.C_X0108, signal.aspects.red)
+
+  digital.set(devices.W0106, false)
+  digital.set(devices.W0108, false)
+
+  X0108B.state = 0
+  X0108B.number = nil
+end
+
+-- S0106 进路
+
+local S0106 = { state = 0, number = nil }
+
+function S0106.layout()
+  -- 封锁 S0102
+  digital.set(devices.LOCK_S0102, false)
+  signal.set(devices.C_S0102, signal.aspects.red)
+
+  -- 排列 S0106
+  digital.set(devices.W0110, true)
+  digital.set(devices.W0112, true)
+
+  -- 排列完成
+  signal.set(devices.C_S0106, signal.aspects.green)
+
+  chat.say("折返线进站进路排列完成")
+end
+
+function S0106.open()
+  digital.set(devices.CONTROL_R, false)
+
+  digital.set(devices.LOCK_X0104, true)
+  digital.set(devices.LOCK_S0106, true)
+
+  chat.say("折返线进站进路开放")
+end
+
+function S0106.reset()
+  digital.set(devices.LOCK_S0106, false)
+
+  signal.set(devices.C_S0106, signal.aspects.red)
+
+  digital.set(devices.W0110, false)
+  digital.set(devices.W0112, false)
+
+  S0106.state = 0
+  S0106.number = nil
+end
+
+----
+
 digital.set(devices.W0102, false)
 digital.set(devices.W0104, false)
 digital.set(devices.W0106, false)
@@ -34,8 +118,7 @@ if (signal.get(devices.S0102) == signal.aspects.green) then
   digital.set(devices.LOCK_S0106, true)
 end
 
-local x0108 = 0
-local s0106 = 0
+----
 
 -- 上行
 
@@ -44,9 +127,14 @@ digital.set(devices.LOCK_S0102, signal.get(devices.S0102) == signal.aspects.gree
 
 digital.set(devices.DOOR_S, false)
 
+eventbus.on(devices.S0102, "aspect_changed", function(receiver, aspect)
+  -- TODO
+end)
+
 local countdown_s = countdown.bind(devices.COUNTDOWN_S, DURATION, function(delayed)
+  digital.set(devices.DOOR_S, false)
+
   if (signal.get(devices.S0101) == signal.aspects.green) then
-    digital.set(devices.DOOR_S, false)
     digital.set(devices.LOCK_S0101, true)
   end
 end)
@@ -65,14 +153,10 @@ eventbus.on(devices.DETECTOR_S, "minecart", function(detector, type, en, pc, sc,
     event.timer(2, function()
       digital.set(devices.DOOR_S, true)
     end)
-  end
 
-  if (routes.stops(number, STATION_CODE .. "R") and s0106 == 2) then
-    s0106 = 0
-    -- TODO: 判断是不是存车线里同一列车，因为上行方向还有别的车插入
-    signal.set(devices.C_S0106, signal.aspects.red)
-    digital.set(devices.W0110, false)
-    digital.set(devices.W0112, false)
+    if (S0106.number == number) then
+      S0106.reset()
+    end
   end
 end)
 
@@ -80,10 +164,6 @@ eventbus.on(devices.S0101, "aspect_changed", function(receiver, aspect)
   if (aspect == signal.aspects.green) then
     countdown_s:go()
   end
-end)
-
-eventbus.on(devices.S0102, "aspect_changed", function(receiver, aspect)
-  -- TODO
 end)
 
 -- 下行
@@ -97,23 +177,17 @@ eventbus.on(devices.X0103, "aspect_changed", function(receiver, aspect)
   digital.set(devices.LOCK_X0103, aspect == signal.aspects.green)
 end)
 
--- 排列入折返线进路
-function layoutForX0108B()
-  digital.set(devices.LOCK_S0106, true)
-  digital.set(devices.LOCK_X0104, false)
-  digital.set(devices.CONTROL_R, true)
-  digital.set(devices.W0106, true)
-  digital.set(devices.W0108, true)
-end
-
 local countdown_x = countdown.bind(devices.COUNTDOWN_X, DURATION, function(delayed)
-  if (x0108 == 0 and signal.get(devices.X0108) == signal.aspects.green) then
-    digital.set(devices.DOOR_X, false)
-    digital.set(devices.LOCK_X0108, true)
-  elseif (x0108 == 1 and signal.get(devices.X0108B) == signal.aspects.green) then
-    layoutForX0108B()
-    digital.set(devices.DOOR_X, false)
-    digital.set(devices.LOCK_X0108, true)
+  digital.set(devices.DOOR_X, false)
+
+  if (X0108B.state == 1) then
+    if (signal.get(devices.X0108) == signal.aspects.green) then
+      digital.set(devices.LOCK_X0108, true)
+    end
+  else
+    if (signal.get(devices.X0108B) == signal.aspects.green) then
+      X0108B.open()
+    end
   end
 end)
 
@@ -121,8 +195,6 @@ eventbus.on(devices.DETECTOR_X, "minecart", function(detector, type, en, pc, sc,
   if (number == nil) then
     return
   end
-
-  signal.set(devices.C_X0108, signal.aspects.red)
 
   if (routes.stops(number, STATION_CODE .. "X")) then
     chat.say(number .. " 下行站内停车")
@@ -136,27 +208,29 @@ eventbus.on(devices.DETECTOR_X, "minecart", function(detector, type, en, pc, sc,
   end
 
   if (routes.stops(number, STATION_CODE .. "R")) then
-    chat.say(number .. " 已排列入折返线进路")
-
-    x0108 = 1
+    X0108B.state = 1
+    X0108B.number = number
 
     if (signal.get(devices.X0108B) == signal.aspects.green) then
-      layoutForX0108B()
+      X0108B.layout()
     end
-
-    signal.set(devices.C_X0108, signal.get(devices.X0108B))
   else
-    signal.set(devices.C_X0108, signal.get(devices.X0108))
+    if (X0108B.state == 0) then
+      digital.set(devices.W0106, false)
+      digital.set(devices.W0108, false)
+
+      signal.set(devices.C_X0108, signal.get(devices.X0108))
+    end
   end
 
   if (routes.stops(number, STATION_CODE .. "S")) then
-    chat.say(number .. " 已准备出折返线进路")
-    s0106 = 1
+    S0106.state = 1
+    S0106.number = number
   end
 end)
 
 eventbus.on(devices.X0108, "aspect_changed", function(receiver, aspect)
-  if (x0108 == 0) then
+  if (X0108B.state == 0) then
     signal.set(devices.C_X0108, aspect)
     if (aspect == signal.aspects.green) then
       countdown_x:go()
@@ -165,9 +239,10 @@ eventbus.on(devices.X0108, "aspect_changed", function(receiver, aspect)
 end)
 
 eventbus.on(devices.X0108B, "aspect_changed", function(receiver, aspect)
-  if (x0108 == 1) then
+  if (X0108B.state == 1) then
     signal.set(devices.C_X0108, aspect)
     if (aspect == signal.aspects.green) then
+      X0108B.layout()
       countdown_x:go()
     end
   end
@@ -175,60 +250,43 @@ end)
 
 -- 折返线
 
-function openS0106()
-  chat.say("出折返线进路开放")
-
-  -- 封锁 S0102
-  signal.set(devices.C_S0102, signal.aspects.red)
-  digital.set(devices.LOCK_S0102, false)
-
-  -- 开放 S0106
-  digital.set(devices.W0110, true)
-  digital.set(devices.W0112, true)
-  digital.set(devices.CONTROL_R, false)
-  digital.set(devices.LOCK_S0106, true)
-  digital.set(devices.LOCK_X0104, true)
-end
-
 eventbus.on(devices.DETECTOR_X0104, "minecart", function(detector, type, en, pc, sc, number, o)
   if (number == nil) then
     return
   end
 
-  if (x0108 == 1) then
-    chat.say(number .. " 已进入折返线")
-
-    x0108 = 0
-    signal.set(devices.C_X0108, signal.get(devices.X0108))
-
-    -- 道岔复位
-    digital.set(devices.W0106, false)
-    digital.set(devices.W0108, false)
+  if (X0108B.state == 1) then
+    X0108B.reset()
   end
 
-  if (s0106 == 1) then
-    chat.say(number .. " 已排列出折返线进路")
-    s0106 = 2
-    signal.set(devices.C_S0106, signal.get(devices.S0102))
+  if (S0106.state == 1) then
+    S0106.state = 2
+
     if (signal.get(devices.S0102) == signal.aspects.green) then
-      event.timer(2, function()
-        openS0106()
-      end)
+      S0106.layout()
+      S0106.open()
+      S0106.state = 3
     end
   end
 end)
 
 eventbus.on(devices.S0102, "aspect_changed", function(receiver, aspect)
-  if (s0106 == 2) then
-    signal.set(devices.C_S0106, aspect)
+  if (S0106.state == 2) then
     if (aspect == signal.aspects.green) then
-      openS0106()
+      S0106.layout()
+      S0106.open()
+      S0106.state = 3
     end
+  elseif (S0106.state == 3) then
+    signal.set(devices.C_S0106, signal.get(devices.S0102))
   else
     -- signal.set(devices.C_S0106, aspect)
     -- digital.set(devices.LOCK_S0102, aspect == signal.aspects.green)
     -- TODO
   end
+end)
+
+eventbus.on(chat.address, "chat_message", function(c, user, message)
 end)
 
 chat.setName("沙贝")
