@@ -180,7 +180,7 @@ end)
 local countdown_x = countdown.bind(devices.COUNTDOWN_X, DURATION, function(delayed)
   digital.set(devices.DOOR_X, false)
 
-  if (X0108B.state == 1) then
+  if (X0108B.state == 0) then
     if (signal.get(devices.X0108) == signal.aspects.green) then
       digital.set(devices.LOCK_X0108, true)
     end
