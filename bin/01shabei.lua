@@ -136,6 +136,7 @@ local countdown_s = countdown.bind(devices.COUNTDOWN_S, DURATION, function(delay
 
   if (signal.get(devices.S0101) == signal.aspects.green) then
     digital.set(devices.LOCK_S0101, true)
+    countdown_s.stop()
   end
 end)
 
@@ -183,10 +184,12 @@ local countdown_x = countdown.bind(devices.COUNTDOWN_X, DURATION, function(delay
   if (X0108B.state == 0) then
     if (signal.get(devices.X0108) == signal.aspects.green) then
       digital.set(devices.LOCK_X0108, true)
+      countdown_x.stop()
     end
   else
     if (signal.get(devices.X0108B) == signal.aspects.green) then
       X0108B.open()
+      countdown_x.stop()
     end
   end
 end)

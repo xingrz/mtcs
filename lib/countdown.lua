@@ -25,8 +25,6 @@ function countdown.bind(address, duration, callback)
 end
 
 function countdown.start(self)
-  self.stop(self)
-
   self.remains = self.duration
   self._update(self)
 
@@ -48,7 +46,6 @@ end
 
 function countdown.go(self)
   if (self._timer ~= nil and self.remains <= 0) then
-    self.stop(self)
     self.callback(-self.remains)
   end
 end
