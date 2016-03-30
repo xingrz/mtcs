@@ -25,10 +25,14 @@ digital.set(devices.LOCK_S0302, signal.get(devices.S0302) == signal.aspects.gree
 digital.set(devices.DOOR_S, false)
 
 local countdown_s = countdown.bind(devices.COUNTDOWN_S, DURATION, function(delayed)
+  digital.set(devices.DOOR_S, false)
+
   if (signal.get(devices.S0301) == signal.aspects.green) then
-    digital.set(devices.DOOR_S, false)
     digital.set(devices.LOCK_S0301, true)
+    return true
   end
+
+  return false
 end)
 
 eventbus.on(devices.DETECTOR_S, "minecart", function(detector, type, en, pc, sc, number, o)
@@ -66,10 +70,14 @@ digital.set(devices.LOCK_X0304, signal.get(devices.X0304) == signal.aspects.gree
 digital.set(devices.DOOR_X, false)
 
 local countdown_x = countdown.bind(devices.COUNTDOWN_X, DURATION, function(delayed)
+  digital.set(devices.DOOR_X, false)
+
   if (signal.get(devices.X0304) == signal.aspects.green) then
-    digital.set(devices.DOOR_X, false)
     digital.set(devices.LOCK_X0304, true)
+    return true
   end
+
+  return false
 end)
 
 eventbus.on(devices.DETECTOR_X, "minecart", function(detector, type, en, pc, sc, number, o)

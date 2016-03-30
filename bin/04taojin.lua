@@ -184,7 +184,11 @@ local countdown_x = countdown.bind(devices.COUNTDOWN_X, DURATION, function(delay
     digital.set(devices.CONTROL_S0405, false)
     digital.set(devices.LOCK_S0405, true)
     digital.set(devices.LOCK_X0408, true)
+
+    return true
   end
+
+  return false
 end)
 
 eventbus.on(devices.DETECTOR_X0408, "minecart", function(d, t, n, p, s, number, o)

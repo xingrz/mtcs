@@ -136,8 +136,10 @@ local countdown_s = countdown.bind(devices.COUNTDOWN_S, DURATION, function(delay
 
   if (signal.get(devices.S0101) == signal.aspects.green) then
     digital.set(devices.LOCK_S0101, true)
-    countdown_s.stop()
+    return true
   end
+
+  return false
 end)
 
 eventbus.on(devices.DETECTOR_S, "minecart", function(detector, type, en, pc, sc, number, o)
@@ -184,14 +186,16 @@ local countdown_x = countdown.bind(devices.COUNTDOWN_X, DURATION, function(delay
   if (X0108B.state == 0) then
     if (signal.get(devices.X0108) == signal.aspects.green) then
       digital.set(devices.LOCK_X0108, true)
-      countdown_x.stop()
+      return true
     end
   else
     if (signal.get(devices.X0108B) == signal.aspects.green) then
       X0108B.open()
-      countdown_x.stop()
+      return true
     end
   end
+
+  return false
 end)
 
 eventbus.on(devices.DETECTOR_X, "minecart", function(detector, type, en, pc, sc, number, o)

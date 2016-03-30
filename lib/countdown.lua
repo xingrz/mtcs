@@ -46,7 +46,9 @@ end
 
 function countdown.go(self)
   if (self._timer ~= nil and self.remains <= 0) then
-    self.callback(-self.remains)
+    if (self.callback(-self.remains)) then
+      self.stop(self)
+    end
   end
 end
 
