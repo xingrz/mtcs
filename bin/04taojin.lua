@@ -130,6 +130,11 @@ function X0408.open()
   digital.set(devices.LOCK_X0408, true)
 end
 
+function X0408.reset()
+  X0408.state = 0
+  X0408.number = nil
+end
+
 --
 
 local X0408B = { state = 0, number = nil }
@@ -173,24 +178,26 @@ eventbus.on(devices.DETECTOR_S0402, "minecart", function(d, t, n, p, s, number, 
 end)
 
 eventbus.on(devices.S0402, "aspect_changed", function(r, aspect)
-  if S0402.state == 1 then
+  if S0402.state ~= 0 then
     signal.set(devices.C_S0402, aspect)
-    if aspect == signal.aspects.green then
-      S0402.layout()
-      S0402.open()
-      S0402.state = 2
-    end
+  end
+
+  if S0402.state == 1 and aspect == signal.aspects.green then
+    S0402.layout()
+    S0402.open()
+    S0402.state = 2
   end
 end)
 
 eventbus.on(devices.S0402B, "aspect_changed", function(r, aspect)
-  if S0402B.state == 1 then
+  if S0402B.state ~= 0 then
     signal.set(devices.C_S0402, aspect)
-    if aspect == signal.aspects.green then
-      S0402B.layout()
-      S0402B.open()
-      S0402B.state = 2
-    end
+  end
+
+  if S0402B.state == 1 and aspect == signal.aspects.green then
+    S0402B.layout()
+    S0402B.open()
+    S0402B.state = 2
   end
 end)
 
@@ -231,13 +238,14 @@ eventbus.on(devices.DETECTOR_X0404, "minecart", function(d, t, n, p, s, number, 
 end)
 
 eventbus.on(devices.S0406, "aspect_changed", function(r, aspect)
-  if S0406.state == 1 then
+  if S0406.state ~= 0 then
     signal.set(devices.C_S0406, aspect)
-    if (aspect == signal.aspects.green) then
-      S0406.layout()
-      S0406.open()
-      S0406.state = 2
-    end
+  end
+
+  if S0406.state == 1 and aspect == signal.aspects.green then
+    S0406.layout()
+    S0406.open()
+    S0406.state = 2
   end
 end)
 
@@ -250,10 +258,14 @@ digital.set(devices.LOCK_S0405, signal.get(devices.X0408) == signal.aspects.gree
 digital.set(devices.DOOR_X, false)
 digital.set(devices.CONTROL_S, false)
 
+digital.set(devices.W0408, false)
+digital.set(devices.W0406, false)
+
 local countdown_x = countdown.bind(devices.COUNTDOWN_X, DURATION, function(delayed)
   if (signal.get(devices.X0408) == signal.aspects.green) then
     X0408.layout()
     X0408.open()
+    X0408.state = 2
     return true
   end
 
@@ -265,38 +277,46 @@ eventbus.on(devices.DETECTOR_X0408, "minecart", function(d, t, n, p, s, number, 
     return
   end
 
-  if X0408 ~= 0 then
+  if X0408.state == 2 then
+    X0408.reset()
     return
   end
 
-  if S0406.number == number or routes.stops(number, STATION_CODE .. "X") then
+  if S0406.number == number then
     S0406.reset()
+  end
 
-    chat.say(number .. " 下行站内停车")
+  if routes.stops(number, STATION_CODE .. "X") then
+    if X0408.state == 0 then
+      X0408.state = 1
+      X0408.number = number
+    end
 
-    digital.set(devices.LOCK_X0408, false)
-    countdown_x:start()
+    if X0408.state == 1 then
+      chat.say(number .. " 下行站内停车")
 
-    event.timer(2, function()
-      digital.set(devices.DOOR_X, true)
-    end)
+      digital.set(devices.LOCK_X0408, false)
+      countdown_x:start()
 
-    X0408.state = 1
-    X0408.number = number
+      event.timer(2, function()
+        digital.set(devices.DOOR_X, true)
+      end)
 
-    if signal.get(devices.X0408) == signal.aspects.green then
-      X0408.layout()
-      X0408.state = 2
+      if signal.get(devices.X0408) == signal.aspects.green then
+        X0408.layout()
+        X0408.state = 2
+      end
     end
   end
 end)
 
 eventbus.on(devices.X0408, "aspect_changed", function(receiver, aspect)
-  if (X0408 == 1) then
+  if X0408.state ~= 1 then
     signal.set(devices.C_X0408, aspect)
-    if (aspect == signal.aspects.green) then
-      countdown_x:go()
-    end
+  end
+
+  if X0408.state == 1 and aspect == signal.aspects.green then
+    countdown_x:go()
   end
 end)
 
