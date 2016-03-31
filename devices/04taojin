@@ -36,7 +36,7 @@ digital_detector        273b12e0-4a1d-4284-9547-eaa48614462d    DETECTOR_X0404
 redstone                6b48d334-1c19-49bb-999d-cc7e9a5be11e    LOCK_S0406
 
 redstone                e3c3d144-c74a-40f2-b9d9-05798c0ea14c    LOCK_S0405
-redstone                f0c800d2-e39e-458b-8a2d-b9af05bc3fe6    CONTROL_S0405
+redstone                f0c800d2-e39e-458b-8a2d-b9af05bc3fe6    CONTROL_S
 
 redstone                0700cab3-db94-4162-b1ff-f5ae413509b3    LOCK_S0402
 redstone                94daaf75-8343-4faf-ad6d-3817eb40ea39    LOCK_X0403

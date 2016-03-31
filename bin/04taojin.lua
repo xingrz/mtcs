@@ -7,6 +7,8 @@ local eventbus = require("eventbus")
 local digital = require("digital")
 local signal = require("signal")
 
+local chat = require("component").chat_box
+
 local devices = require("devices").load("/mtcs/devices/04taojin")
 
 local routes = require("routes")
@@ -17,46 +19,177 @@ print("===========================================\n")
 local STATION_CODE = "04"
 local DURATION = 10
 
--- 上行进入存车线
+-- state: 0 = 未排列进路, 1 = 等待信号, 2 = 开放
 
-local s0402 = 0  -- S0402 进路：0 未开通，1 正线，2 侧线
+--
+
+local S0402 = { state = 0, number = nil }
+
+function S0402.layout()
+  -- 排列 S0402
+  digital.set(devices.W0402, false)
+  digital.set(devices.W0404, false)
+
+  -- 排列完成
+  signal.set(devices.C_S0402, signal.aspects.green)
+end
+
+function S0402.open()
+  digital.set(devices.LOCK_S0402, true)
+end
+
+--
+
+local S0402B = { state = 0, number = nil }
+
+function S0402B.layout()
+  -- 排列 S0402B
+  digital.set(devices.LOCK_S0406, false)
+  -- TODO: set LOCK_X0404 on
+
+  digital.set(devices.W0402, true)
+  digital.set(devices.W0404, true)
+
+  -- 排列完成
+  signal.set(devices.C_S0402, signal.aspects.green)
+
+  chat.say("上行进存车线进路排列完成")
+end
+
+function S0402B.open()
+  digital.set(devices.LOCK_S0402, true)
+  chat.say("下行进存车线进路开放")
+end
+
+function S0402B.reset()
+  digital.set(devices.LOCK_S0402, false)
+
+  digital.set(devices.W0402, false)
+  digital.set(devices.W0404, false)
+
+  signal.set(devices.C_S0402, signal.get(devices.S0402))
+
+  S0402B.state = 0
+  S0402B.number = nil
+end
+
+--
+
+local S0406 = { state = 0, number = nil }
+
+function S0406.layout()
+  -- 封锁 X0403
+  digital.set(devices.LOCK_X0403, false)
+
+  signal.set(devices.C_X0408, signal.aspects.red)
+  signal.set(devices.C_X0403, signal.aspects.red)
+
+  -- 排列 X0108
+  digital.set(devices.LOCK_S0405, false)
+  digital.set(devices.LOCK_X0408, true)
+
+  digital.set(devices.CONTROL_S, true)
+
+  digital.set(devices.W0408, true)
+  digital.set(devices.W0406, true)
+
+  -- 排列完成
+  signal.set(devices.C_S0406, signal.aspects.green)
+
+  chat.say("存车线进下行站台进路排列完成")
+end
+
+function S0406.open()
+  digital.set(devices.LOCK_S0406, true)
+  chat.say("存车线进下行站台进路开放")
+end
+
+function S0406.reset()
+  digital.set(devices.LOCK_S0406, false)
+
+  signal.set(devices.C_S0406, signal.aspects.red)
+
+  digital.set(devices.W0406, false)
+  digital.set(devices.W0408, false)
+
+  S0406.state = 0
+  S0406.number = nil
+end
+
+--
+
+local X0408 = { state = 0, number = nil }
+
+function X0408.layout()
+  signal.set(devices.C_X0408, signal.aspects.green)
+end
+
+function X0408.open()
+  digital.set(devices.CONTROL_S, false)
+  digital.set(devices.LOCK_S0405, true)
+  digital.set(devices.LOCK_X0408, true)
+end
+
+--
+
+local X0408B = { state = 0, number = nil }
+-- TODO
+
+--
+
+-- 上行进入存车线
 
 -- 重启复位
 digital.set(devices.LOCK_S0402, signal.get(devices.S0402) == signal.aspects.green)
 
 eventbus.on(devices.DETECTOR_S0402, "minecart", function(d, t, n, p, s, number, o)
-  if (number == nil) then
+  if number == nil then
     return
   end
 
-  -- 如果 S0402 进路已排列，则忽略检测
-  if (s0402 ~= 0) then
+  if S0402.state ~= 0 or S0402B.state ~= 0 then
     return
   end
 
-  if (routes.stops(number, STATION_CODE .. "K")) then
-    s0402 = 2
-    if (signal.get(devices.S0402B) == signal.aspects.green) then
-      print(os.date() .. " " .. number .. " 准备进入存车线")
-      signal.set(devices.C_S0402, signal.aspects.green)
-      digital.set(devices.W0402, true)
-      digital.set(devices.W0404, true)
-      digital.set(devices.LOCK_S0402, true)
-    else
-      print(os.date() .. " " .. number .. " 上行站外停车，等待信号进入存车线")
-      signal.set(devices.C_S0402, signal.aspects.red)
-      digital.set(devices.LOCK_S0402, false)
+  if routes.stops(number, STATION_CODE .. "K") then
+    S0402B.state = 1
+    S0402B.number = number
+
+    if signal.get(devices.S0402B) == signal.aspects.green then
+      S0402B.layout()
+      S0402B.open()
+      S0402B.state = 2
     end
   else
-    s0402 = 1
-    if (signal.get(devices.S0402) == signal.aspects.green) then
-      print(os.date() .. " " .. number .. " 准备进入上行站台")
-      signal.set(devices.C_S0402, signal.aspects.green)
-      digital.set(devices.LOCK_S0402, true)
-    else
-      print(os.date() .. " " .. number .. " 上行站外停车，等待信号进入上行站台")
-      signal.set(devices.C_S0402, signal.aspects.red)
-      digital.set(devices.LOCK_S0402, false)
+    S0402.state = 1
+    S0402.number = number
+
+    if signal.get(devices.S0402) == signal.aspects.green then
+      S0402.layout()
+      S0402.open()
+      S0402.state = 2
+    end
+  end
+end)
+
+eventbus.on(devices.S0402, "aspect_changed", function(r, aspect)
+  if S0402.state == 1 then
+    signal.set(devices.C_S0402, aspect)
+    if aspect == signal.aspects.green then
+      S0402.layout()
+      S0402.open()
+      S0402.state = 2
+    end
+  end
+end)
+
+eventbus.on(devices.S0402B, "aspect_changed", function(r, aspect)
+  if S0402B.state == 1 then
+    signal.set(devices.C_S0402, aspect)
+    if aspect == signal.aspects.green then
+      S0402B.layout()
+      S0402B.open()
+      S0402B.state = 2
     end
   end
 end)
@@ -66,104 +199,44 @@ eventbus.on(devices.DETECTOR_S0406, "minecart", function(d, t, n, p, s, number, 
     return
   end
 
-  if (s0402 == 2) then
-    print(os.date() .. " " .. number .. " 已进入存车线")
-    s0402 = 0
-    signal.set(devices.C_S0402, signal.aspects.red)
-    digital.set(devices.LOCK_S0402, false)
-    digital.set(devices.W0402, false)
-    digital.set(devices.W0404, false)
-  end
-end)
-
-eventbus.on(devices.S0402, "aspect_changed", function(r, aspect)
-  if (s0402 == 1) then
-    signal.set(devices.C_S0402, aspect)
-    if (aspect == signal.aspects.green) then
-      print(os.date() .. " 列车准备进入上行站台")
-      digital.set(devices.LOCK_S0402, true)
-    end
-  end
-end)
-
-eventbus.on(devices.S0402B, "aspect_changed", function(r, aspect)
-  if (s0402 == 2) then
-    signal.set(devices.C_S0402, aspect)
-    if (aspect == signal.aspects.green) then
-      print(os.date() .. " 列车准备进入存车线")
-      digital.set(devices.W0402, true)
-      digital.set(devices.W0404, true)
-      digital.set(devices.LOCK_S0402, true)
-    end
+  if S0402B.number == number then
+    S0402B.reset()
   end
 end)
 
 -- 存车线进入下行
 
-local s0406 = 0  -- S0406 进路：0 未开通，1 进入下行正线，2 到达下行站台，3 下行站台换向
-
 eventbus.on(devices.DETECTOR_X0404, "minecart", function(d, t, n, p, s, number, o)
-  if (number == nil) then
+  if number == nil then
     return
   end
 
-  -- 如果 S0406 进路已排列，则忽略检测
-  if (s0406 ~= 0) then
+  if S0406.state ~= 0 then
     return
   end
 
-  if (routes.stops(number, STATION_CODE .. "X")) then
-    s0406 = 1
-    if (signal.get(devices.S0406) == signal.aspects.green) then
-      print(os.date() .. " " .. number .. " 准备从存车线进入下行站台")
+  if routes.stops(number, STATION_CODE .. "X") then
+    S0406.state = 1
+    S0406.number = number
 
-      -- 封锁 X0403
-      signal.set(devices.C_X0403, signal.aspects.red)
-      digital.set(devices.LOCK_X0403, false)
-      digital.set(devices.LOCK_S0405, false)
-
-      -- 扳道
-      digital.set(devices.W0406, true)
-      digital.set(devices.W0408, true)
-
-      -- 开放下行站台
-      signal.set(devices.C_X0408, signal.aspects.red)
-      digital.set(devices.CONTROL_S0405, true)
-      digital.set(devices.LOCK_X0408, true)
-
-      -- 开放 S0406
-      signal.set(devices.C_S0406, signal.aspects.green)
-      digital.set(devices.LOCK_S0406, true)
-    else
-      print(os.date() .. " " .. number .. " 存车线等待信号进入下行站台")
-      signal.set(devices.C_S0406, signal.aspects.red)
-      digital.set(devices.LOCK_S0406, false)
+    if signal.get(devices.S0406) == signal.aspects.green then
+      S0406.layout()
+      S0406.open()
+      S0406.state = 2
     end
+
+    X0408.state = 1
+    X0408.number = number
   end
 end)
 
 eventbus.on(devices.S0406, "aspect_changed", function(r, aspect)
-  if (s0406 == 1) then
+  if S0406.state == 1 then
     signal.set(devices.C_S0406, aspect)
     if (aspect == signal.aspects.green) then
-      print(os.date() .. " 列车准备从存车线进入下行站台")
-
-      -- 封锁 X0403
-      signal.set(devices.C_X0403, signal.aspects.red)
-      digital.set(devices.LOCK_X0403, false)
-      digital.set(devices.LOCK_S0405, false)
-
-      -- 扳道
-      digital.set(devices.W0406, true)
-      digital.set(devices.W0408, true)
-
-      -- 开放下行站台
-      digital.set(devices.CONTROL_S0405, true)
-      digital.set(devices.LOCK_X0408, true)
-
-      -- 开放 S0406
-      signal.set(devices.C_S0406, signal.aspects.green)
-      digital.set(devices.LOCK_S0406, true)
+      S0406.layout()
+      S0406.open()
+      S0406.state = 2
     end
   end
 end)
@@ -172,19 +245,15 @@ end)
 
 digital.set(devices.LOCK_X0403, signal.get(devices.X0403) == signal.aspects.green)
 digital.set(devices.LOCK_X0408, signal.get(devices.X0408) == signal.aspects.green)
+digital.set(devices.LOCK_S0405, signal.get(devices.X0408) == signal.aspects.green)
 
 digital.set(devices.DOOR_X, false)
-digital.set(devices.CONTROL_S0405, false)
+digital.set(devices.CONTROL_S, false)
 
 local countdown_x = countdown.bind(devices.COUNTDOWN_X, DURATION, function(delayed)
   if (signal.get(devices.X0408) == signal.aspects.green) then
-    print(os.date() .. " 下行站台发车")
-
-    digital.set(devices.DOOR_X, false)
-    digital.set(devices.CONTROL_S0405, false)
-    digital.set(devices.LOCK_S0405, true)
-    digital.set(devices.LOCK_X0408, true)
-
+    X0408.layout()
+    X0408.open()
     return true
   end
 
@@ -192,51 +261,38 @@ local countdown_x = countdown.bind(devices.COUNTDOWN_X, DURATION, function(delay
 end)
 
 eventbus.on(devices.DETECTOR_X0408, "minecart", function(d, t, n, p, s, number, o)
-  if (number == nil) then
+  if number == nil then
     return
   end
 
-  -- S0406 进路复位
-  if (s0406 == 1) then
-    print(os.date() .. " " .. number .. " 已从存车线进入下行站台")
+  if X0408 ~= 0 then
+    return
+  end
 
-    s0406 = 2 -- 到达下行站台
+  if S0406.number == number or routes.stops(number, STATION_CODE .. "X") then
+    S0406.reset()
 
-    -- 存车线信号复位
-    signal.set(devices.C_S0406, signal.aspects.red)
-    digital.set(devices.LOCK_S0406, false)
+    chat.say(number .. " 下行站内停车")
 
-    -- 道岔复位
-    digital.set(devices.W0406, false)
-    digital.set(devices.W0408, false)
-
+    digital.set(devices.LOCK_X0408, false)
     countdown_x:start()
 
     event.timer(2, function()
       digital.set(devices.DOOR_X, true)
     end)
-  elseif (s0406 == 2) then
-    print(os.date() .. " " .. number .. " 完成折返，下行发车")
-    s0406 = 3 -- 换向
-    event.timer(2, function()
-      s0406 = 0 -- 进路复位
-    end)
-  elseif (s0406 == 0) then
-    if (routes.stops(number, STATION_CODE .. "X")) then
-      print(os.date() .. " " .. number .. " 下行站内停车")
 
-      digital.set(devices.LOCK_X0408, false)
-      countdown_x:start()
+    X0408.state = 1
+    X0408.number = number
 
-      event.timer(2, function()
-        digital.set(devices.DOOR_X, true)
-      end)
+    if signal.get(devices.X0408) == signal.aspects.green then
+      X0408.layout()
+      X0408.state = 2
     end
   end
 end)
 
 eventbus.on(devices.X0408, "aspect_changed", function(receiver, aspect)
-  if (s0406 ~= 1) then
+  if (X0408 == 1) then
     signal.set(devices.C_X0408, aspect)
     if (aspect == signal.aspects.green) then
       countdown_x:go()
@@ -249,7 +305,7 @@ eventbus.on(devices.X0408B, "aspect_changed", function(receiver, aspect)
 end)
 
 eventbus.on(devices.X0403, "aspect_changed", function(receiver, aspect)
-  if (s0406 == 0) then
+  if S0406.state == 0 then
     signal.set(devices.C_X0403, aspect)
     digital.set(devices.LOCK_X0403, aspect == signal.aspects.green)
   end
@@ -262,15 +318,12 @@ eventbus.on(devices.DETECTOR_S0401, "minecart", function(d, t, n, p, s, number, 
     return
   end
 
-  -- S0402 进路复位
-  if (s0402 == 1) then
-    s0402 = 0
-    signal.set(devices.C_S0402, signal.aspects.red)
-    digital.set(devices.LOCK_S0402, false)
-  end
-
   -- TODO ...
 end)
+
+chat.setName("淘金")
+chat.setDistance(100)
+chat.say("系统初始化完毕")
 
 while true do
   eventbus.handle(event.pull())
