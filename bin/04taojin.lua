@@ -45,7 +45,7 @@ local S0402B = { state = 0, number = nil }
 function S0402B.layout()
   -- 排列 S0402B
   digital.set(devices.LOCK_S0406, false)
-  -- TODO: set LOCK_X0404 on
+  digital.set(devices.LOCK_X0404, true)
 
   digital.set(devices.W0402, true)
   digital.set(devices.W0404, true)
