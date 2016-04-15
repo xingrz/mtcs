@@ -206,7 +206,7 @@ eventbus.on(devices.DETECTOR_S0406, "minecart", function(d, t, n, p, s, number, 
     return
   end
 
-  if S0402B.number == number then
+  if S0402B.state == 2 then
     S0402B.reset()
   end
 end)
@@ -282,7 +282,7 @@ eventbus.on(devices.DETECTOR_X0408, "minecart", function(d, t, n, p, s, number, 
     return
   end
 
-  if S0406.number == number then
+  if S0406.state == 2 then
     S0406.reset()
   end
 
