@@ -156,16 +156,22 @@ eventbus.on(devices.DETECTOR_S, "minecart", function(detector, type, en, pc, sc,
     event.timer(2, function()
       digital.set(devices.DOOR_S, true)
     end)
-
-    if (S0106.number == number) then
-      S0106.reset()
-    end
   end
 end)
 
 eventbus.on(devices.S0101, "aspect_changed", function(receiver, aspect)
   if (aspect == signal.aspects.green) then
     countdown_s:go()
+  end
+end)
+
+eventbus.on(devices.DETECTOR_S0101, "minecart", function(detector, type, en, pc, sc, number, o)
+  if (number == nil) then
+    return
+  end
+
+  if (S0106.state == 3) then
+    S0106.reset()
   end
 end)
 

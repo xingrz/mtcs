@@ -42,3 +42,5 @@ redstone                52e7811e-bdfd-4baa-bb00-7eb1e5576ce2    LOCK_X0108
 redstone                d1fd83ac-6b6b-4444-a0fa-20e3d7ff1e0d    COUNTDOWN_X
 digital_detector        3c40608b-c441-4e2f-ab49-ca197552bb0d    DETECTOR_X
 redstone                824245ab-7eda-4017-8ad2-1cf5cacd5a94    DOOR_X
+
+digital_detector        373f6c3d-b4fe-453f-9f78-64cc43634333    DETECTOR_S0101
