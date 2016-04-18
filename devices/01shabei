@@ -6,17 +6,22 @@ redstone                22f49b94-88c3-4b73-ba86-3f2a0da312ca    C_S0102
 
 digital_receiver_box    b3e41d1d-2fb9-40e7-be1b-49670aea0298    X0103
 
+redstone                8a90ac79-9dbb-42f9-b3fc-add0cdfc4dc0    LOCK_X0104
+digital_detector        504da08b-9e97-4ad5-bf09-52d421c112f5    DETECTOR_X0104
+
 redstone                bf98b9c1-5601-4481-90e8-387c71efde79    C_S0106
+
+redstone                68ee199a-dba2-4df9-95d1-9187bf5a7a83    LOCK_S0106
+digital_detector        55b308a4-41be-4d87-b815-d60eb9e6d0e0    DETECTOR_S0106
 
 digital_receiver_box    9b65c08e-36e9-41ab-9f7c-2a3eceec7f60    X0108
 digital_receiver_box    8cf1292c-be7a-49cd-a3c4-f3cb7666512c    X0108B
 redstone                379a514a-3ecf-464a-8439-d988f9f97af0    C_X0108
 
-redstone                8a90ac79-9dbb-42f9-b3fc-add0cdfc4dc0    LOCK_X0104
-digital_detector        504da08b-9e97-4ad5-bf09-52d421c112f5    DETECTOR_X0104
+digital_receiver_box    63bbd99e-402f-41e5-b3f1-d3dffa09f5b6    S0110
+redstone                d1169724-40c5-469e-a2df-d80cef6f536c    C_S0110
 
-redstone                68ee199a-dba2-4df9-95d1-9187bf5a7a83    LOCK_S0106
-digital_detector        55b308a4-41be-4d87-b815-d60eb9e6d0e0    DETECTOR_S0106
+redstone                4d24e5f7-fd76-4a72-90eb-6e6975fe6bc9    LOCK_S0110
 
 redstone                2ae6c41a-91b0-4b88-9cfa-309b143b7392    CONTROL_R
 
@@ -26,8 +31,8 @@ redstone                eae71304-d242-4fce-880e-216a1d4e1c29    W0104
 redstone                119db3c0-7e92-4090-900b-9ceb595c594e    W0106
 redstone                a4b5c1ec-14f5-4d10-aa7f-f5c973a85f19    W0108
 
-redstone                90a3b2c9-b75c-436c-b44e-95ff895c8433    W0110
-redstone                c589b6f1-7e8e-47ae-96db-e98c3f11a917    W0112
+redstone                c589b6f1-7e8e-47ae-96db-e98c3f11a917    W0110
+redstone                90a3b2c9-b75c-436c-b44e-95ff895c8433    W0112
 
 redstone                6da0f454-20fb-4e95-9dfd-ed3f94fdc586    LOCK_S0101
 redstone                67455196-e1e3-4fea-9a58-74bd8a99ca94    LOCK_S0102

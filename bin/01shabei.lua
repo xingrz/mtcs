@@ -62,13 +62,13 @@ end
 local S0106 = { state = 0, number = nil }
 
 function S0106.layout()
-  -- 封锁 S0102
-  digital.set(devices.LOCK_S0102, false)
-  signal.set(devices.C_S0102, signal.aspects.red)
+  -- 封锁 S0110
+  digital.set(devices.LOCK_S0110, false)
+  signal.set(devices.C_S0110, signal.aspects.red)
 
   -- 排列 S0106
-  digital.set(devices.W0110, true)
   digital.set(devices.W0112, true)
+  digital.set(devices.W0110, true)
 
   -- 排列完成
   signal.set(devices.C_S0106, signal.aspects.green)
@@ -90,8 +90,8 @@ function S0106.reset()
 
   signal.set(devices.C_S0106, signal.aspects.red)
 
-  digital.set(devices.W0110, false)
   digital.set(devices.W0112, false)
+  digital.set(devices.W0110, false)
 
   S0106.state = 0
   S0106.number = nil
@@ -104,7 +104,7 @@ digital.set(devices.W0104, false)
 digital.set(devices.W0106, false)
 digital.set(devices.W0108, false)
 
-if (signal.get(devices.S0102) == signal.aspects.green) then
+if (signal.get(devices.S0110) == signal.aspects.green) then
   digital.set(devices.W0110, true)
   digital.set(devices.W0112, true)
 
@@ -273,7 +273,7 @@ eventbus.on(devices.DETECTOR_X0104, "minecart", function(detector, type, en, pc,
   if S0106.state == 1 then
     S0106.state = 2
 
-    if (signal.get(devices.S0102) == signal.aspects.green) then
+    if (signal.get(devices.S0110) == signal.aspects.green) then
       S0106.layout()
       S0106.open()
       S0106.state = 3
@@ -281,7 +281,7 @@ eventbus.on(devices.DETECTOR_X0104, "minecart", function(detector, type, en, pc,
   end
 end)
 
-eventbus.on(devices.S0102, "aspect_changed", function(receiver, aspect)
+eventbus.on(devices.S0110, "aspect_changed", function(receiver, aspect)
   if (S0106.state == 2) then
     if (aspect == signal.aspects.green) then
       S0106.layout()
@@ -289,11 +289,11 @@ eventbus.on(devices.S0102, "aspect_changed", function(receiver, aspect)
       S0106.state = 3
     end
   elseif (S0106.state == 3) then
-    signal.set(devices.C_S0106, signal.get(devices.S0102))
+    signal.set(devices.C_S0106, signal.get(devices.S0110))
   else
-    -- signal.set(devices.C_S0106, aspect)
-    -- digital.set(devices.LOCK_S0102, aspect == signal.aspects.green)
-    -- TODO
+    signal.set(devices.C_S0110, aspect)
+    -- S0110 暂时作为吊装线，人工控制进路
+    -- digital.set(devices.LOCK_S0110, aspect == signal.aspects.green)
   end
 end)
 
