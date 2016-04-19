@@ -245,7 +245,7 @@ eventbus.on(devices.DETECTOR_X0404, "minecart", function(d, t, n, p, s, number, 
   end
 
   -- 忽略车尾
-  if S0406.state ~= 0 then
+  if S0406.state == 2 then
     return
   end
 
@@ -262,8 +262,6 @@ eventbus.on(devices.DETECTOR_X0404, "minecart", function(d, t, n, p, s, number, 
 end)
 
 eventbus.on(devices.S0406, "aspect_changed", function(r, aspect)
-  chat.say("S0406: " .. aspect .. " state: " .. S0406.state)
-
   if S0406.state ~= 0 then
     signal.set(devices.C_S0406, aspect)
   end
