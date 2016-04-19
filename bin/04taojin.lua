@@ -58,7 +58,7 @@ end
 
 function S0402B.open()
   digital.set(devices.LOCK_S0402, true)
-  chat.say("下行进存车线进路开放")
+  chat.say("上行进存车线进路开放")
 end
 
 function S0402B.reset()
@@ -101,6 +101,7 @@ end
 
 function S0406.open()
   digital.set(devices.LOCK_S0406, true)
+  digital.set(devices.LOCK_X0404, true)
   chat.say("存车线进下行站台进路开放")
 end
 
@@ -142,6 +143,24 @@ local X0408B = { state = 0, number = nil }
 
 --
 
+local X0403 = { state = 0, number = nil }
+
+function X0403.layout()
+  signal.set(devices.C_X0403, signal.aspects.green)
+end
+
+function X0403.open()
+  digital.set(devices.LOCK_S0405, true)
+  digital.set(devices.LOCK_X0403, true)
+end
+
+function X0403.reset()
+  X0403.state = 0
+  X0403.number = nil
+end
+
+--
+
 -- 上行进入存车线
 
 -- 重启复位
@@ -152,10 +171,12 @@ eventbus.on(devices.DETECTOR_S0402, "minecart", function(d, t, n, p, s, number, 
     return
   end
 
+  -- 忽略车尾
   if S0402.state ~= 0 or S0402B.state ~= 0 then
     return
   end
 
+  -- 如果运行图包含存车线
   if routes.stops(number, STATION_CODE .. "K") then
     S0402B.state = 1
     S0402B.number = number
@@ -206,8 +227,9 @@ eventbus.on(devices.DETECTOR_S0406, "minecart", function(d, t, n, p, s, number, 
     return
   end
 
-  if S0402B.state == 2 then
+  if routes.stops(number, STATION_CODE .. "K") and S0402B.state == 2 then
     S0402B.reset()
+    signal.set(devices.C_S0402, signal.get(devices.S0402))
   end
 end)
 
@@ -218,6 +240,7 @@ eventbus.on(devices.DETECTOR_X0404, "minecart", function(d, t, n, p, s, number, 
     return
   end
 
+  -- 忽略车尾
   if S0406.state ~= 0 then
     return
   end
@@ -231,9 +254,6 @@ eventbus.on(devices.DETECTOR_X0404, "minecart", function(d, t, n, p, s, number, 
       S0406.open()
       S0406.state = 2
     end
-
-    X0408.state = 1
-    X0408.number = number
   end
 end)
 
@@ -277,46 +297,45 @@ eventbus.on(devices.DETECTOR_X0408, "minecart", function(d, t, n, p, s, number, 
     return
   end
 
-  if X0408.state == 2 then
-    X0408.reset()
-    return
-  end
-
+  -- 无论如何必须复位 S0406 进路
   if S0406.state == 2 then
     S0406.reset()
   end
 
-  if routes.stops(number, STATION_CODE .. "X") then
-    if X0408.state == 0 then
-      X0408.state = 1
-      X0408.number = number
-    end
+  -- 车尾经过时复位进路
+  if X0408.state ~= 0 then
+    X0408.reset()
+    return
+  end
 
-    if X0408.state == 1 then
-      chat.say(number .. " 下行站内停车")
+  if routes.stops(number, STATION_CODE .. "X") or routes.stops(number, STATION_CODE .. "K") then
+    X0408.state = 1
+    X0408.number = number
+  end
 
-      digital.set(devices.LOCK_X0408, false)
-      countdown_x:start()
+  if X0408.state == 1 then
+    chat.say(number .. " 下行站内停车")
 
-      event.timer(2, function()
-        digital.set(devices.DOOR_X, true)
-      end)
+    digital.set(devices.LOCK_X0408, false)
+    countdown_x:start()
 
-      if signal.get(devices.X0408) == signal.aspects.green then
-        X0408.layout()
-        X0408.state = 2
-      end
+    event.timer(2, function()
+      digital.set(devices.DOOR_X, true)
+    end)
+
+    if signal.get(devices.X0408) == signal.aspects.green then
+      X0408.layout()
+      X0408.state = 2
     end
   end
 end)
 
 eventbus.on(devices.X0408, "aspect_changed", function(receiver, aspect)
-  if X0408.state ~= 1 then
+  if S0406.state ~= 2 then
     signal.set(devices.C_X0408, aspect)
-  end
-
-  if X0408.state == 1 and aspect == signal.aspects.green then
-    countdown_x:go()
+    if aspect == signal.aspects.green then
+      countdown_x:go()
+    end
   end
 end)
 
