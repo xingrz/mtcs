@@ -53,12 +53,12 @@ function S0402B.layout()
   -- 排列完成
   signal.set(devices.C_S0402, signal.aspects.green)
 
-  chat.say("上行进存车线进路排列完成")
+  chat.say("S0402B 进路排列完成")
 end
 
 function S0402B.open()
   digital.set(devices.LOCK_S0402, true)
-  chat.say("上行进存车线进路开放")
+  chat.say("S0402B 进路开放")
 end
 
 function S0402B.reset()
@@ -71,6 +71,8 @@ function S0402B.reset()
 
   S0402B.state = 0
   S0402B.number = nil
+
+  chat.say("S0402B 进路复位")
 end
 
 --
@@ -96,13 +98,13 @@ function S0406.layout()
   -- 排列完成
   signal.set(devices.C_S0406, signal.aspects.green)
 
-  chat.say("存车线进下行站台进路排列完成")
+  chat.say("S0406 进路排列完成")
 end
 
 function S0406.open()
   digital.set(devices.LOCK_S0406, true)
   digital.set(devices.LOCK_X0404, true)
-  chat.say("存车线进下行站台进路开放")
+  chat.say("S0406 进路开放")
 end
 
 function S0406.reset()
@@ -115,6 +117,8 @@ function S0406.reset()
 
   S0406.state = 0
   S0406.number = nil
+
+  chat.say("S0406 进路复位")
 end
 
 --
@@ -258,6 +262,8 @@ eventbus.on(devices.DETECTOR_X0404, "minecart", function(d, t, n, p, s, number, 
 end)
 
 eventbus.on(devices.S0406, "aspect_changed", function(r, aspect)
+  chat.say("S0406: " .. aspect .. " state: " .. S0406.state)
+
   if S0406.state ~= 0 then
     signal.set(devices.C_S0406, aspect)
   end
