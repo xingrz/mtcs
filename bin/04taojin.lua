@@ -164,7 +164,7 @@ end
 -- 上行进入存车线
 
 -- 重启复位
-digital.set(devices.LOCK_S0402, signal.get(devices.S0402) == signal.aspects.green)
+digital.set(devices.LOCK_S0402, signal.get(devices.S0402) == signal.aspects.green and signal.get(devices.S0402B) == signal.aspects.green)
 
 eventbus.on(devices.DETECTOR_S0402, "minecart", function(d, t, n, p, s, number, o)
   if number == nil then
@@ -303,10 +303,15 @@ eventbus.on(devices.DETECTOR_X0408, "minecart", function(d, t, n, p, s, number, 
   end
 
   -- 车尾经过时复位进路
-  if X0408.state ~= 0 then
+  if X0408.state == 2 then
     X0408.reset()
     return
   end
+
+  -- 禁止从下行上线该站的折返列车
+  -- 假如折返列车从正线顺向插入
+  -- 会识别车位地点码，但无法锁车，导致继续计时
+  -- 下趟折返列车进入时会将进路复位，导致无法出站
 
   if routes.stops(number, STATION_CODE .. "X") or routes.stops(number, STATION_CODE .. "K") then
     X0408.state = 1
@@ -333,9 +338,9 @@ end)
 eventbus.on(devices.X0408, "aspect_changed", function(receiver, aspect)
   if S0406.state ~= 2 then
     signal.set(devices.C_X0408, aspect)
-    if aspect == signal.aspects.green then
-      countdown_x:go()
-    end
+    countdown_x:go()
+  else
+    digital.set(devices.LOCK_X0408, aspect == signal.aspects.green)
   end
 end)
 
