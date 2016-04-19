@@ -367,6 +367,14 @@ eventbus.on(devices.DETECTOR_S0401, "minecart", function(d, t, n, p, s, number, 
   -- TODO ...
 end)
 
+eventbus.on(chat.address, "chat_message", function(c, user, message)
+  if message == "-open S0406" then
+    S0406.layout()
+    S0406.open()
+    S0406.state = 2
+  end
+end)
+
 chat.setName("淘金")
 chat.setDistance(100)
 chat.say("系统初始化完毕")
