@@ -338,9 +338,11 @@ end)
 eventbus.on(devices.X0408, "aspect_changed", function(receiver, aspect)
   if S0406.state ~= 2 then
     signal.set(devices.C_X0408, aspect)
-    countdown_x:go()
-  else
-    digital.set(devices.LOCK_X0408, aspect == signal.aspects.green)
+    if X0408.state == 1 then
+      countdown_x:go()
+    else
+      digital.set(devices.LOCK_X0408, aspect == signal.aspects.green)
+    end
   end
 end)
 
