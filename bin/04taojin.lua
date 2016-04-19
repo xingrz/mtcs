@@ -338,7 +338,7 @@ eventbus.on(devices.DETECTOR_X0408, "minecart", function(d, t, n, p, s, number, 
 end)
 
 eventbus.on(devices.X0408, "aspect_changed", function(receiver, aspect)
-  if S0406.state ~= 3 then
+  if S0406.state ~= 2 and S0406.state ~= 3 then
     signal.set(devices.C_X0408, aspect)
     if X0408.state == 1 then
       countdown_x:go()
