@@ -167,9 +167,6 @@ end
 
 -- 上行进入存车线
 
--- 重启复位
-digital.set(devices.LOCK_S0402, signal.get(devices.S0402) == signal.aspects.green and signal.get(devices.S0402B) == signal.aspects.green)
-
 eventbus.on(devices.DETECTOR_S0402, "minecart", function(d, t, n, p, s, number, o)
   if number == nil then
     return
@@ -246,6 +243,7 @@ eventbus.on(devices.DETECTOR_X0404, "minecart", function(d, t, n, p, s, number, 
 
   -- 忽略车尾
   if S0406.state == 2 then
+    S0406.state = 3
     return
   end
 
@@ -302,7 +300,7 @@ eventbus.on(devices.DETECTOR_X0408, "minecart", function(d, t, n, p, s, number, 
   end
 
   -- 无论如何必须复位 S0406 进路
-  if S0406.state == 2 then
+  if S0406.state == 3 then
     S0406.reset()
   end
 
@@ -340,7 +338,7 @@ eventbus.on(devices.DETECTOR_X0408, "minecart", function(d, t, n, p, s, number, 
 end)
 
 eventbus.on(devices.X0408, "aspect_changed", function(receiver, aspect)
-  if S0406.state ~= 2 then
+  if S0406.state ~= 3 then
     signal.set(devices.C_X0408, aspect)
     if X0408.state == 1 then
       countdown_x:go()
@@ -376,6 +374,10 @@ eventbus.on(chat.address, "chat_message", function(c, user, message)
     S0406.layout()
     S0406.open()
     S0406.state = 2
+  elseif message == "-open S0402B" then
+    S0402B.layout()
+    S0402B.open()
+    S0402B.state = 2
   end
 end)
 
