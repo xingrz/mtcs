@@ -28,7 +28,7 @@ local S0402 = { state = 0, number = nil }
 function S0402.layout()
   -- 排列 S0402
   digital.set(devices.W0402, false)
-  digital.set(devices.W0404, false)
+  digital.set(devices.W0404, true)
 
   -- 排列完成
   signal.set(devices.C_S0402, signal.aspects.green)
@@ -48,7 +48,7 @@ function S0402B.layout()
   digital.set(devices.LOCK_X0404, true)
 
   digital.set(devices.W0402, true)
-  digital.set(devices.W0404, true)
+  digital.set(devices.W0404, false)
 
   -- 排列完成
   signal.set(devices.C_S0402, signal.aspects.green)
@@ -65,7 +65,7 @@ function S0402B.reset()
   digital.set(devices.LOCK_S0402, false)
 
   digital.set(devices.W0402, false)
-  digital.set(devices.W0404, false)
+  digital.set(devices.W0404, true)
 
   signal.set(devices.C_S0402, signal.get(devices.S0402))
 
@@ -114,9 +114,6 @@ function S0406.reset()
 
   digital.set(devices.W0406, false)
   digital.set(devices.W0408, false)
-
-  S0406.state = 0
-  S0406.number = nil
 
   chat.say("S0406 进路复位")
 end
@@ -290,8 +287,10 @@ eventbus.on(devices.DETECTOR_X0408, "minecart", function(d, t, n, p, s, number, 
   end
 
   -- 无论如何必须复位 S0406 进路
+  S0406.reset()
   if S0406.state == 3 then
-    S0406.reset()
+    S0406.state = 0
+    S0406.number = nil
   end
 
   -- 车尾经过时复位进路

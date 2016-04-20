@@ -15,7 +15,8 @@ digital_receiver_box    1a8a6249-04db-4028-9e1d-8cd502d359c9    X0408B
 redstone                00fd1127-a33c-4224-a280-960cd3ed880c    C_X0408
 
 redstone                683a7047-fe31-4db0-ad02-fbef28365c75    W0402
-redstone                a59fbe5a-c70a-41b3-b8cb-ed6eae5610a7    W0404
+redstone                819e898f-c5e1-4b6e-8717-398340af73e2    W0404
+
 redstone                d5f80d22-ab50-42f5-b657-2eb1b6291aac    W0406
 redstone                0cae6799-068e-4398-aaa5-d3966315b339    W0408
 
@@ -31,11 +32,13 @@ redstone                a48a59d9-218f-4f45-b072-dbeed8a992ef    LOCK_S0401
 digital_detector        97680f9c-867d-46b8-9d18-86ef87d8b47c    DETECTOR_X0408
 redstone                dfdb0a15-b889-45a7-a085-fbc8c1c31571    LOCK_X0408
 
-digital_detector        ca9323eb-172d-4df2-9f5b-e19086c39471    DETECTOR_S0406
-redstone                e1973ead-1b10-47ea-bd8f-7cfe8c5ccf69    LOCK_S0406
+digital_detector        e8a16988-547f-48f0-9cca-0b02b5c62bf5    DETECTOR_S0406
+redstone                90f5d28f-bd96-4125-a1c8-b566d5799983    LOCK_S0406
 
-digital_detector        386d3241-b1eb-4a66-9330-1b3ef1261e9c    DETECTOR_X0404
-redstone                b31a8181-576d-47cc-b882-d3d611211315    LOCK_X0404
+digital_detector        e51f47a5-1502-464e-8c9d-6a1e0f3f10cd    DETECTOR_X0404
+redstone                83911b34-59d4-40c5-871d-8acc989f849b    LOCK_X0404
+
+redstone                a28a806c-0f7b-4f5a-9a30-bde2d69bcf76    CONTROL_K
 
 redstone                e3c3d144-c74a-40f2-b9d9-05798c0ea14c    LOCK_S0405
 redstone                f0c800d2-e39e-458b-8a2d-b9af05bc3fe6    CONTROL_S
@@ -44,4 +47,3 @@ redstone                0700cab3-db94-4162-b1ff-f5ae413509b3    LOCK_S0402
 redstone                94daaf75-8343-4faf-ad6d-3817eb40ea39    LOCK_X0403
 
 digital_detector        ad3f3efa-20e0-48e0-929c-95e408861a6f    DETECTOR_S0402
-
