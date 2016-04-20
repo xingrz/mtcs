@@ -86,8 +86,6 @@ function S0106.open()
 end
 
 function S0106.reset()
-  digital.set(devices.LOCK_S0106, false)
-
   signal.set(devices.C_S0106, signal.aspects.red)
 
   digital.set(devices.W0112, false)

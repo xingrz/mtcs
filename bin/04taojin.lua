@@ -273,16 +273,6 @@ end)
 
 -- 下行站台
 
-digital.set(devices.LOCK_X0403, signal.get(devices.X0403) == signal.aspects.green)
-digital.set(devices.LOCK_X0408, signal.get(devices.X0408) == signal.aspects.green)
-digital.set(devices.LOCK_S0405, signal.get(devices.X0408) == signal.aspects.green)
-
-digital.set(devices.DOOR_X, false)
-digital.set(devices.CONTROL_S, false)
-
-digital.set(devices.W0408, false)
-digital.set(devices.W0406, false)
-
 local countdown_x = countdown.bind(devices.COUNTDOWN_X, DURATION, function(delayed)
   if (signal.get(devices.X0408) == signal.aspects.green) then
     X0408.layout()
@@ -370,14 +360,18 @@ eventbus.on(devices.DETECTOR_S0401, "minecart", function(d, t, n, p, s, number, 
 end)
 
 eventbus.on(chat.address, "chat_message", function(c, user, message)
-  if message == "-open S0406" then
-    S0406.layout()
-    S0406.open()
-    S0406.state = 2
-  elseif message == "-open S0402B" then
+  if message == "-open S0402B" then
     S0402B.layout()
     S0402B.open()
     S0402B.state = 2
+  elseif message == "-open S0406" then
+    S0406.layout()
+    S0406.open()
+    S0406.state = 2
+  elseif message == "-open S0408" then
+    X0408.layout()
+    X0408.open()
+    X0408.state = 2
   end
 end)
 
