@@ -183,6 +183,8 @@ eventbus.on(devices.DETECTOR_S0402, "minecart", function(d, t, n, p, s, number, 
       S0402B.layout()
       S0402B.open()
       S0402B.state = 2
+    else
+      signal.set(devices.C_S0402, signal.aspects.red)
     end
   else
     S0402.state = 1
@@ -192,6 +194,8 @@ eventbus.on(devices.DETECTOR_S0402, "minecart", function(d, t, n, p, s, number, 
       S0402.layout()
       S0402.open()
       S0402.state = 2
+    else
+      signal.set(devices.C_S0402, signal.aspects.red)
     end
   end
 end)
@@ -367,12 +371,16 @@ eventbus.on(chat.address, "chat_message", function(c, user, message)
     S0406.layout()
     S0406.open()
     S0406.state = 2
-  elseif message == "-open S0408" then
+  elseif message == "-open X0408" then
     X0408.layout()
     X0408.open()
     X0408.state = 2
   end
 end)
+
+digital.set(devices.LOCK_S0402, false)
+digital.set(devices.LOCK_S0406, false)
+digital.set(devices.LOCK_X0408, false)
 
 chat.setName("淘金")
 chat.setDistance(100)
