@@ -184,7 +184,7 @@ eventbus.on(devices.DETECTOR_S0402, "minecart", function(d, t, n, p, s, number, 
       S0402B.open()
       S0402B.state = 2
     else
-      digital.set(LOCK_S0402, false)
+      digital.set(devices.LOCK_S0402, false)
       signal.set(devices.C_S0402, signal.aspects.red)
     end
   else
@@ -196,7 +196,7 @@ eventbus.on(devices.DETECTOR_S0402, "minecart", function(d, t, n, p, s, number, 
       S0402.open()
       S0402.state = 2
     else
-      digital.set(LOCK_S0402, false)
+      digital.set(devices.LOCK_S0402, false)
       signal.set(devices.C_S0402, signal.aspects.red)
     end
   end
@@ -259,7 +259,7 @@ eventbus.on(devices.DETECTOR_X0404, "minecart", function(d, t, n, p, s, number, 
       S0406.open()
       S0406.state = 2
     else
-      digital.set(LOCK_S0406, false)
+      digital.set(devices.LOCK_S0406, false)
       signal.set(devices.C_S0406, signal.aspects.red)
     end
   end
