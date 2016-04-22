@@ -184,6 +184,7 @@ eventbus.on(devices.DETECTOR_S0402, "minecart", function(d, t, n, p, s, number, 
       S0402B.open()
       S0402B.state = 2
     else
+      digital.set(LOCK_S0402, false)
       signal.set(devices.C_S0402, signal.aspects.red)
     end
   else
@@ -195,6 +196,7 @@ eventbus.on(devices.DETECTOR_S0402, "minecart", function(d, t, n, p, s, number, 
       S0402.open()
       S0402.state = 2
     else
+      digital.set(LOCK_S0402, false)
       signal.set(devices.C_S0402, signal.aspects.red)
     end
   end
@@ -256,6 +258,9 @@ eventbus.on(devices.DETECTOR_X0404, "minecart", function(d, t, n, p, s, number, 
       S0406.layout()
       S0406.open()
       S0406.state = 2
+    else
+      digital.set(LOCK_S0406, false)
+      signal.set(devices.C_S0406, signal.aspects.red)
     end
   end
 end)
@@ -326,6 +331,8 @@ eventbus.on(devices.DETECTOR_X0408, "minecart", function(d, t, n, p, s, number, 
     if signal.get(devices.X0408) == signal.aspects.green then
       X0408.layout()
       X0408.state = 2
+    else
+      signal.set(devices.C_X0408, false)
     end
   end
 end)
@@ -363,15 +370,21 @@ eventbus.on(devices.DETECTOR_S0401, "minecart", function(d, t, n, p, s, number, 
 end)
 
 eventbus.on(chat.address, "chat_message", function(c, user, message)
-  if message == "-open S0402B" then
+  if message == "S0402B.open" then
     S0402B.layout()
     S0402B.open()
     S0402B.state = 2
-  elseif message == "-open S0406" then
+  end
+
+  if message == "S0406.open" then
     S0406.layout()
     S0406.open()
     S0406.state = 2
-  elseif message == "-open X0408" then
+  end
+
+  if message == "X0408.open" then
+    countdown_x:stop()
+    digital.set(devices.DOOR_X, false)
     X0408.layout()
     X0408.open()
     X0408.state = 2
@@ -379,8 +392,15 @@ eventbus.on(chat.address, "chat_message", function(c, user, message)
 end)
 
 digital.set(devices.LOCK_S0402, false)
+digital.set(devices.LOCK_X0403, false)
+digital.set(devices.LOCK_X0404, false)
 digital.set(devices.LOCK_S0406, false)
 digital.set(devices.LOCK_X0408, false)
+
+digital.set(devices.W0402, false)
+digital.set(devices.W0404, true)
+digital.set(devices.W0406, false)
+digital.set(devices.W0408, false)
 
 chat.setName("淘金")
 chat.setDistance(100)
