@@ -95,29 +95,7 @@ function S0106.reset()
   S0106.number = nil
 end
 
-----
-
-digital.set(devices.W0102, false)
-digital.set(devices.W0104, false)
-digital.set(devices.W0106, false)
-digital.set(devices.W0108, false)
-
-if (signal.get(devices.S0110) == signal.aspects.green) then
-  digital.set(devices.W0110, true)
-  digital.set(devices.W0112, true)
-
-  digital.set(devices.CONTROL_R, false)
-
-  digital.set(devices.LOCK_X0104, true)
-  digital.set(devices.LOCK_S0106, true)
-end
-
-----
-
 -- 上行
-
-digital.set(devices.LOCK_S0101, signal.get(devices.S0101) == signal.aspects.green)
-digital.set(devices.LOCK_S0102, signal.get(devices.S0102) == signal.aspects.green)
 
 digital.set(devices.DOOR_S, false)
 
@@ -171,9 +149,6 @@ end)
 
 -- 下行
 
-digital.set(devices.LOCK_X0103, signal.get(devices.X0103) == signal.aspects.green)
-digital.set(devices.LOCK_X0108, signal.get(devices.X0108) == signal.aspects.green)
-
 digital.set(devices.DOOR_X, false)
 
 eventbus.on(devices.X0103, "aspect_changed", function(receiver, aspect)
@@ -221,6 +196,8 @@ eventbus.on(devices.DETECTOR_X, "minecart", function(detector, type, en, pc, sc,
     if (signal.get(devices.X0108B) == signal.aspects.green) then
       X0108B.layout()
       X0108B.state = 2
+    else
+      signal.set(devices.C_X0108, signal.aspects.red)
     end
   else
     if (X0108B.state == 0) then
@@ -247,13 +224,14 @@ eventbus.on(devices.X0108, "aspect_changed", function(receiver, aspect)
 end)
 
 eventbus.on(devices.X0108B, "aspect_changed", function(receiver, aspect)
-  if X0108B.state == 1 then
+  if X0108B.state ~= 0 then
     signal.set(devices.C_X0108, aspect)
-    if aspect == signal.aspects.green then
-      X0108B.layout()
-      X0108B.state = 2
-      countdown_x:go()
-    end
+  end
+
+  if X0108B.state == 1 and aspect == signal.aspects.green then
+    X0108B.layout()
+    X0108B.state = 2
+    countdown_x:go()
   end
 end)
 
@@ -296,7 +274,44 @@ eventbus.on(devices.S0110, "aspect_changed", function(receiver, aspect)
 end)
 
 eventbus.on(chat.address, "chat_message", function(c, user, message)
+  if message == "S0101.open" then
+    countdown_s:stop()
+    digital.set(devices.DOOR_S, false)
+    digital.set(devices.LOCK_S0101, true)
+  end
+
+  if message == "X0103.open" then
+    digital.set(devices.LOCK_X0103, true)
+  end
+
+  if message == "S0106.open" then
+    S0106.layout()
+    S0106.open()
+    S0106.state = 3
+  end
+
+  if message == "X0108.open" then
+    countdown_x:stop()
+    digital.set(devices.DOOR_X, false)
+    digital.set(devices.LOCK_X0108, true)
+  end
+
+  if message == "X0108B.open" then
+    countdown_x:stop()
+    digital.set(devices.DOOR_X, false)
+    X0108B.layout()
+    X0108B.open()
+    X0108B.state = 2
+  end
 end)
+
+digital.set(devices.LOCK_S0101, false)
+digital.set(devices.LOCK_X0103, false)
+digital.set(devices.LOCK_X0104, false)
+digital.set(devices.LOCK_S0106, false)
+digital.set(devices.LOCK_X0108, false)
+digital.set(devices.LOCK_S0101, false)
+digital.set(devices.LOCK_S0110, false)
 
 chat.setName("沙贝")
 chat.setDistance(100)
