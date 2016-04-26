@@ -313,6 +313,13 @@ digital.set(devices.LOCK_X0108, false)
 digital.set(devices.LOCK_S0101, false)
 digital.set(devices.LOCK_S0110, false)
 
+digital.set(devices.W0102, false)
+digital.set(devices.W0104, false)
+digital.set(devices.W0106, false)
+digital.set(devices.W0108, false)
+digital.set(devices.W0110, false)
+digital.set(devices.W0112, false)
+
 chat.setName("沙贝")
 chat.setDistance(100)
 chat.say("系统初始化完毕")
