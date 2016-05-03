@@ -21,6 +21,16 @@ local DURATION = 10
 
 -- state: 0 = 未排列进路, 1 = 等待信号, 2 = 开放
 
+local S0401 = { state = 0 }
+
+function S0401.layout()
+  digital.set(devices.LOCK_S0401, false)
+end
+
+function S0401.open()
+  digital.set(devices.LOCK_S0401, true)
+end
+
 --
 
 local S0402 = { state = 0, number = nil }
@@ -169,8 +179,12 @@ eventbus.on(devices.DETECTOR_S0402, "minecart", function(d, t, n, p, s, number, 
     return
   end
 
+  if S0402.state == 2 then
+    S0402.state = 0
+  end
+
   -- 忽略车尾
-  if S0402.state ~= 0 or S0402B.state ~= 0 then
+  if S0402B.state ~= 0 then
     return
   end
 
@@ -361,15 +375,58 @@ end)
 
 -- 上行进站
 
-eventbus.on(devices.DETECTOR_S0401, "minecart", function(d, t, n, p, s, number, o)
-  if (number == nil) then
+eventbus.on(devices.S0410, "aspect_changed", function(receiver, aspect)
+  digital.set(devices.LOCK_S0410, aspect == signal.aspects.green)
+end)
+
+local countdown_s = countdown.bind(devices.COUNTDOWN_S, DURATION, function(delayed)
+  digital.set(devices.DOOR_S, false)
+
+  if signal.get(devices.S0401) == signal.aspects.green then
+    S0401.open()
+    S0401.state = 0
+    return true
+  end
+
+  return false
+end)
+
+eventbus.on(devices.DETECTOR_S0401, "minecart", function(detector, type, en, pc, sc, number, o)
+  if number == nil then
     return
   end
 
-  -- TODO ...
+  if routes.stops(number, STATION_CODE .. "S") then
+    chat.say(number .. " 上行站内停车")
+
+    S0401.state = 1
+    S0401.layout()
+
+    countdown_s:start()
+
+    event.timer(2, function()
+      digital.set(devices.DOOR_S, true)
+    end)
+  end
 end)
 
+eventbus.on(devices.S0401, "aspect_changed", function(receiver, aspect)
+  if S0401.state == 1 then
+    countdown_s:go()
+  else
+    digital.set(devices.LOCK_S0401, aspect == signal.aspects.green)
+  end
+end)
+
+--
+
 eventbus.on(chat.address, "chat_message", function(c, user, message)
+  if message == "S0401.open" then
+    countdown_s:stop()
+    digital.set(devices.DOOR_S, false)
+    S0401.open()
+  end
+
   if message == "S0402B.open" then
     S0402B.layout()
     S0402B.open()
@@ -382,6 +439,10 @@ eventbus.on(chat.address, "chat_message", function(c, user, message)
     S0406.state = 2
   end
 
+  if message == "X0403.open" then
+    digital.set(devices.LOCK_X0403, true)
+  end
+
   if message == "X0408.open" then
     countdown_x:stop()
     digital.set(devices.DOOR_X, false)
@@ -389,13 +450,19 @@ eventbus.on(chat.address, "chat_message", function(c, user, message)
     X0408.open()
     X0408.state = 2
   end
+
+  if message == "S0410.open" then
+    digital.set(devices.LOCK_S0410, true)
+  end
 end)
 
+digital.set(devices.LOCK_S0401, false)
 digital.set(devices.LOCK_S0402, false)
-digital.set(devices.LOCK_X0403, false)
+digital.set(devices.LOCK_X0403, signal.get(devices.X0403) == signal.aspects.green)
 digital.set(devices.LOCK_X0404, false)
 digital.set(devices.LOCK_S0406, false)
 digital.set(devices.LOCK_X0408, false)
+digital.set(devices.LOCK_S0410, signal.get(devices.S0410) == signal.aspects.green)
 
 digital.set(devices.W0402, false)
 digital.set(devices.W0404, true)

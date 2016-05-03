@@ -47,3 +47,6 @@ redstone                0700cab3-db94-4162-b1ff-f5ae413509b3    LOCK_S0402
 redstone                94daaf75-8343-4faf-ad6d-3817eb40ea39    LOCK_X0403
 
 digital_detector        ad3f3efa-20e0-48e0-929c-95e408861a6f    DETECTOR_S0402
+
+digital_receiver_box    9e230c69-838b-4ab0-a7fd-e34df2ca5ba4    S0410
+redstone                6c659402-175f-4b01-95df-7d00db2e8c2a    LOCK_S0410
