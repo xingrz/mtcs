@@ -4,6 +4,7 @@ local event = require("event")
 
 local countdown = require("countdown")
 local eventbus = require("eventbus")
+local detector = require("detector")
 local digital = require("digital")
 local signal = require("signal")
 
@@ -33,7 +34,7 @@ end
 
 --
 
-local S0402 = { state = 0, number = nil }
+local S0402 = { state = 0 }
 
 function S0402.layout()
   -- 排列 S0402
@@ -48,9 +49,14 @@ function S0402.open()
   digital.set(devices.LOCK_S0402, true)
 end
 
+function S0402.lock()
+  digital.set(devices.LOCK_S0402, false)
+  signal.set(devices.C_S0402, signal.aspects.red)
+end
+
 --
 
-local S0402B = { state = 0, number = nil }
+local S0402B = { state = 0 }
 
 function S0402B.layout()
   -- 排列 S0402B
@@ -61,7 +67,7 @@ function S0402B.layout()
   digital.set(devices.W0404, false)
 
   -- 排列完成
-  signal.set(devices.C_S0402, signal.aspects.green)
+  signal.set(devices.C_S0402, signal.aspects.yellow)
 
   chat.say("S0402B 进路排列完成")
 end
@@ -77,36 +83,35 @@ function S0402B.reset()
   digital.set(devices.W0402, false)
   digital.set(devices.W0404, true)
 
-  signal.set(devices.C_S0402, signal.get(devices.S0402))
-
-  S0402B.state = 0
-  S0402B.number = nil
+  signal.set(devices.C_S0402, signal.aspects.red)
 
   chat.say("S0402B 进路复位")
 end
 
 --
 
-local S0406 = { state = 0, number = nil }
+local S0406 = { state = 0 }
 
 function S0406.layout()
   -- 封锁 X0403
   digital.set(devices.LOCK_X0403, false)
 
-  signal.set(devices.C_X0408, signal.aspects.red)
   signal.set(devices.C_X0403, signal.aspects.red)
+  signal.set(devices.C_X0410, signal.aspects.red)
+  signal.set(devices.C_X0408, signal.aspects.red)
 
-  -- 排列 X0108
+  -- 排列 S0406
   digital.set(devices.LOCK_S0405, false)
   digital.set(devices.LOCK_X0408, true)
 
-  digital.set(devices.CONTROL_S, true)
+  digital.set(devices.CONTROL_S0406, true)
+  digital.set(devices.CONTROL_S0405, true)
 
   digital.set(devices.W0408, true)
   digital.set(devices.W0406, true)
 
   -- 排列完成
-  signal.set(devices.C_S0406, signal.aspects.green)
+  signal.set(devices.C_S0406, signal.aspects.yellow)
 
   chat.say("S0406 进路排列完成")
 end
@@ -117,15 +122,13 @@ function S0406.open()
   chat.say("S0406 进路开放")
 end
 
-function S0406.reset()
+function S0406.lock()
   digital.set(devices.LOCK_S0406, false)
 
   signal.set(devices.C_S0406, signal.aspects.red)
 
   digital.set(devices.W0406, false)
   digital.set(devices.W0408, false)
-
-  chat.say("S0406 进路复位")
 end
 
 --
@@ -133,28 +136,47 @@ end
 local X0408 = { state = 0, number = nil }
 
 function X0408.layout()
+  digital.set(devices.CONTROL_S0406, false)
+
+  digital.set(devices.W0406, false)
+  digital.set(devices.W0408, false)
+
   signal.set(devices.C_X0408, signal.aspects.green)
 end
 
 function X0408.open()
-  digital.set(devices.CONTROL_S, false)
-  digital.set(devices.LOCK_S0405, true)
   digital.set(devices.LOCK_X0408, true)
 end
 
-function X0408.reset()
-  X0408.state = 0
-  X0408.number = nil
+function X0408.lock()
+  digital.set(devices.LOCK_X0408, false)
+  signal.set(devices.C_X0408, signal.aspects.red)
 end
 
 --
 
-local X0408B = { state = 0, number = nil }
+local X0408B = { state = 0 }
 -- TODO
 
 --
 
-local X0403 = { state = 0, number = nil }
+local X0410 = { state = 0 }
+
+function X0410.layout()
+  digital.set(devices.LOCK_X0410, false)
+  digital.set(devices.CONTROL_S0406, false)
+  signal.set(devices.C_X0408, signal.aspects.green)
+end
+
+function X0410.open()
+  digital.set(devices.CONTROL_S0405, false)
+  digital.set(devices.LOCK_S0405, true)
+  digital.set(devices.LOCK_X0410, true)
+end
+
+--
+
+local X0403 = { state = 0 }
 
 function X0403.layout()
   signal.set(devices.C_X0403, signal.aspects.green)
@@ -165,21 +187,13 @@ function X0403.open()
   digital.set(devices.LOCK_X0403, true)
 end
 
-function X0403.reset()
-  X0403.state = 0
-  X0403.number = nil
-end
-
 --
 
 -- 上行进入存车线
 
-eventbus.on(devices.DETECTOR_S0402, "minecart", function(d, t, n, p, s, number, o)
-  if number == nil then
-    return
-  end
-
+detector.on(devices.DETECTOR_S0402, function(number)
   if S0402.state == 2 then
+    S0402.lock()
     S0402.state = 0
   end
 
@@ -191,37 +205,33 @@ eventbus.on(devices.DETECTOR_S0402, "minecart", function(d, t, n, p, s, number, 
   -- 如果运行图包含存车线
   if routes.stops(number, STATION_CODE .. "K") then
     S0402B.state = 1
-    S0402B.number = number
 
-    if signal.get(devices.S0402B) == signal.aspects.green then
+    if signal.is_green(devices.S0402B) then
       S0402B.layout()
       S0402B.open()
       S0402B.state = 2
     else
-      digital.set(devices.LOCK_S0402, false)
-      signal.set(devices.C_S0402, signal.aspects.red)
+      S0402.lock()
     end
   else
     S0402.state = 1
-    S0402.number = number
 
-    if signal.get(devices.S0402) == signal.aspects.green then
+    if signal.is_green(devices.S0402) then
       S0402.layout()
       S0402.open()
       S0402.state = 2
     else
-      digital.set(devices.LOCK_S0402, false)
-      signal.set(devices.C_S0402, signal.aspects.red)
+      S0402.lock()
     end
   end
 end)
 
 eventbus.on(devices.S0402, "aspect_changed", function(r, aspect)
   if S0402.state ~= 0 then
-    signal.set(devices.C_S0402, aspect)
+    signal.green(devices.C_S0402, aspect)
   end
 
-  if S0402.state == 1 and aspect == signal.aspects.green then
+  if S0402.state == 1 and signal.is_green(devices.S0402) then
     S0402.layout()
     S0402.open()
     S0402.state = 2
@@ -230,34 +240,26 @@ end)
 
 eventbus.on(devices.S0402B, "aspect_changed", function(r, aspect)
   if S0402B.state ~= 0 then
-    signal.set(devices.C_S0402, aspect)
+    signal.yellow(devices.C_S0402, aspect)
   end
 
-  if S0402B.state == 1 and aspect == signal.aspects.green then
+  if S0402B.state == 1 and signal.is_green(devices.S0402B) then
     S0402B.layout()
     S0402B.open()
     S0402B.state = 2
   end
 end)
 
-eventbus.on(devices.DETECTOR_S0406, "minecart", function(d, t, n, p, s, number, o)
-  if (number == nil) then
-    return
-  end
-
-  if routes.stops(number, STATION_CODE .. "K") and S0402B.state == 2 then
+detector.on(devices.DETECTOR_S0406, function(number)
+  if S0402B.state == 2 then
     S0402B.reset()
-    signal.set(devices.C_S0402, signal.get(devices.S0402))
+    S0402B.state = 0
   end
 end)
 
 -- 存车线进入下行
 
-eventbus.on(devices.DETECTOR_X0404, "minecart", function(d, t, n, p, s, number, o)
-  if number == nil then
-    return
-  end
-
+detector.on(devices.DETECTOR_X0404, function(number)
   -- 忽略车尾
   if S0406.state == 2 then
     S0406.state = 3
@@ -266,59 +268,84 @@ eventbus.on(devices.DETECTOR_X0404, "minecart", function(d, t, n, p, s, number, 
 
   if routes.stops(number, STATION_CODE .. "X") then
     S0406.state = 1
-    S0406.number = number
 
-    if signal.get(devices.S0406) == signal.aspects.green then
+    if signal.is_green(devices.S0406) then
       S0406.layout()
       S0406.open()
       S0406.state = 2
     else
-      digital.set(devices.LOCK_S0406, false)
-      signal.set(devices.C_S0406, signal.aspects.red)
+      S0406.lock()
     end
   end
 end)
 
 eventbus.on(devices.S0406, "aspect_changed", function(r, aspect)
   if S0406.state ~= 0 then
-    signal.set(devices.C_S0406, aspect)
+    signal.yellow(devices.C_S0406, aspect)
   end
 
-  if S0406.state == 1 and aspect == signal.aspects.green then
+  if S0406.state == 1 and signal.is_green(devices.S0406) then
     S0406.layout()
     S0406.open()
     S0406.state = 2
   end
 end)
 
--- 下行站台
+detector.on(devices.DETECTOR_X0408, function(number)
+  S0406.lock()
 
-local countdown_x = countdown.bind(devices.COUNTDOWN_X, DURATION, function(delayed)
-  if (signal.get(devices.X0408) == signal.aspects.green) then
+  if S0406.state == 3 then
+    S0406.state = 0
+  end
+
+  if X0408.state == 2 then
+    X0408.lock()
+    X0408.state = 0
+  end
+
+  if signal.is_green(devices.X0408) then
     X0408.layout()
     X0408.open()
     X0408.state = 2
+  else
+    X0408.lock()
+  end
+
+  -- TODO: X0408B
+end)
+
+eventbus.on(devices.X0408, "aspect_changed", function(receiver, aspect)
+  if X0408.state ~= 0 then
+    signal.green(devices.C_X0408, aspect)
+  end
+
+  if X0408.state == 1 and signal.is_green(devices.X0408) then
+    X0408.layout()
+    X0408.open()
+    X0408.state = 2
+  end
+end)
+
+eventbus.on(devices.X0408B, "aspect_changed", function(receiver, aspect)
+  -- TODO
+end)
+
+-- 下行站台
+
+local countdown_x = countdown.bind(devices.COUNTDOWN_X, DURATION, function(delayed)
+  if signal.is_green(devices.X0410) then
+    X0410.state = 2
+    X0410.open()
     return true
   end
 
   return false
 end)
 
-eventbus.on(devices.DETECTOR_X0408, "minecart", function(d, t, n, p, s, number, o)
-  if number == nil then
-    return
-  end
-
-  -- 无论如何必须复位 S0406 进路
-  S0406.reset()
-  if S0406.state == 3 then
-    S0406.state = 0
-    S0406.number = nil
-  end
-
+detector.on(devices.DETECTOR_X0410, function(number)
   -- 车尾经过时复位进路
-  if X0408.state == 2 then
-    X0408.reset()
+  if X0410.state == 2 then
+    X0410.state = 0
     return
   end
 
@@ -327,56 +354,42 @@ eventbus.on(devices.DETECTOR_X0408, "minecart", function(d, t, n, p, s, number, 
   -- 会识别车位地点码，但无法锁车，导致继续计时
   -- 下趟折返列车进入时会将进路复位，导致无法出站
 
-  if routes.stops(number, STATION_CODE .. "X") or routes.stops(number, STATION_CODE .. "K") then
-    X0408.state = 1
-    X0408.number = number
-  end
-
-  if X0408.state == 1 then
+  if routes.stops(number, STATION_CODE .. "X") then
     chat.say(number .. " 下行站内停车")
 
-    digital.set(devices.LOCK_X0408, false)
+    X0410.state = 1
+    X0410.layout()
+
+    digital.set(devices.LOCK_X0410, false)
+
     countdown_x:start()
 
     event.timer(2, function()
       digital.set(devices.DOOR_X, true)
     end)
-
-    if signal.get(devices.X0408) == signal.aspects.green then
-      X0408.layout()
-      X0408.state = 2
-    else
-      signal.set(devices.C_X0408, false)
-    end
   end
 end)
 
-eventbus.on(devices.X0408, "aspect_changed", function(receiver, aspect)
-  if S0406.state ~= 2 and S0406.state ~= 3 then
-    signal.set(devices.C_X0408, aspect)
-    if X0408.state == 1 then
-      countdown_x:go()
-    else
-      digital.set(devices.LOCK_X0408, aspect == signal.aspects.green)
-    end
+eventbus.on(devices.X0410, "aspect_changed", function(receiver, aspect)
+  signal.green(devices.C_X0408, aspect)
+  if X0410.state == 1 then
+    countdown_x:go()
+  else
+    digital.set(devices.LOCK_X0410, aspect == signal.aspects.green)
   end
-end)
-
-eventbus.on(devices.X0408B, "aspect_changed", function(receiver, aspect)
-  -- TODO
 end)
 
 eventbus.on(devices.X0403, "aspect_changed", function(receiver, aspect)
   if S0406.state == 0 then
-    signal.set(devices.C_X0403, aspect)
+    signal.green(devices.C_X0403, aspect)
     digital.set(devices.LOCK_X0403, aspect == signal.aspects.green)
   end
 end)
 
 -- 上行进站
 
-eventbus.on(devices.S0410, "aspect_changed", function(receiver, aspect)
-  digital.set(devices.LOCK_S0410, aspect == signal.aspects.green)
+eventbus.on(devices.S0412, "aspect_changed", function(receiver, aspect)
+  digital.set(devices.LOCK_S0412, aspect == signal.aspects.green)
 end)
 
 local countdown_s = countdown.bind(devices.COUNTDOWN_S, DURATION, function(delayed)
@@ -391,11 +404,7 @@ local countdown_s = countdown.bind(devices.COUNTDOWN_S, DURATION, function(delay
   return false
 end)
 
-eventbus.on(devices.DETECTOR_S0401, "minecart", function(detector, type, en, pc, sc, number, o)
-  if number == nil then
-    return
-  end
-
+detector.on(devices.DETECTOR_S0401, function(number)
   if routes.stops(number, STATION_CODE .. "S") then
     chat.say(number .. " 上行站内停车")
 
@@ -443,16 +452,16 @@ eventbus.on(chat.address, "chat_message", function(c, user, message)
     digital.set(devices.LOCK_X0403, true)
   end
 
-  if message == "X0408.open" then
+  if message == "X0410.open" then
     countdown_x:stop()
     digital.set(devices.DOOR_X, false)
-    X0408.layout()
-    X0408.open()
+    X0410.layout()
+    X0410.open()
     X0408.state = 2
   end
 
-  if message == "S0410.open" then
-    digital.set(devices.LOCK_S0410, true)
+  if message == "S0412.open" then
+    digital.set(devices.LOCK_S0412, true)
   end
 end)
 
@@ -462,7 +471,8 @@ digital.set(devices.LOCK_X0403, signal.get(devices.X0403) == signal.aspects.gree
 digital.set(devices.LOCK_X0404, false)
 digital.set(devices.LOCK_S0406, false)
 digital.set(devices.LOCK_X0408, false)
-digital.set(devices.LOCK_S0410, signal.get(devices.S0410) == signal.aspects.green)
+digital.set(devices.LOCK_X0410, false)
+digital.set(devices.LOCK_S0412, signal.get(devices.S0412) == signal.aspects.green)
 
 digital.set(devices.W0402, false)
 digital.set(devices.W0404, true)

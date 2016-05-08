@@ -29,6 +29,26 @@ function signal.set(address, aspect)
   end
 end
 
+function signal.is_green(address)
+  return signal.get(address) == signal.aspects.green
+end
+
+function signal.green(address, aspect)
+  if aspect == signal.aspects.green then
+    signal.set(address, signal.aspects.green)
+  else
+    signal.set(address, signal.aspects.red)
+  end
+end
+
+function signal.yellow(address, aspect)
+  if aspect == signal.aspects.yellow then
+    signal.set(address, signal.aspects.yellow)
+  else
+    signal.set(address, signal.aspects.red)
+  end
+end
+
 function signal.color(aspect)
   if (aspect == signal.aspects.green) then
     return 0x00FF00
