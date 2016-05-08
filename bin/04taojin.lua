@@ -293,10 +293,8 @@ eventbus.on(devices.S0406, "aspect_changed", function(r, aspect)
 end)
 
 detector.on(devices.DETECTOR_X0408, function(number)
-  S0406.lock()
-
-  if S0406.state == 3 then
-    S0406.state = 0
+  if S0406.state == 2 then
+    return
   end
 
   if X0408.state == 2 then
@@ -344,6 +342,13 @@ local countdown_x = countdown.bind(devices.COUNTDOWN_X, DURATION, function(delay
 end)
 
 detector.on(devices.DETECTOR_X0410, function(number)
+  -- 无论如何必须复位 S0406 进路
+  S0406.lock()
+
+  if S0406.state == 3 then
+    S0406.state = 0
+  end
+
   -- 车尾经过时复位进路
   if X0410.state == 2 then
     X0410.state = 0
@@ -361,8 +366,6 @@ detector.on(devices.DETECTOR_X0410, function(number)
     X0410.state = 1
     X0410.layout()
 
-    digital.set(devices.LOCK_X0410, false)
-
     countdown_x:start()
 
     event.timer(2, function()
@@ -372,7 +375,12 @@ detector.on(devices.DETECTOR_X0410, function(number)
 end)
 
 eventbus.on(devices.X0410, "aspect_changed", function(receiver, aspect)
+  if S0406.state == 2 or S0406.state == 3 then
+    return
+  end
+
   signal.green(devices.C_X0408, aspect)
+
   if X0410.state == 1 then
     countdown_x:go()
   else
@@ -479,6 +487,9 @@ digital.set(devices.W0402, false)
 digital.set(devices.W0404, true)
 digital.set(devices.W0406, false)
 digital.set(devices.W0408, false)
+
+digital.set(devices.CONTROL_S0405, false)
+digital.set(devices.CONTROL_S0406, false)
 
 chat.setName("淘金")
 chat.setDistance(100)
