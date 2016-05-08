@@ -137,8 +137,6 @@ end
 local X0408 = { state = 0, number = nil }
 
 function X0408.layout()
-  digital.set(devices.CONTROL_S0406, false)
-
   digital.set(devices.W0406, false)
   digital.set(devices.W0408, false)
 

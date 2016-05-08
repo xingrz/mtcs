@@ -93,6 +93,8 @@ function S0106.reset()
 
   S0106.state = 0
   S0106.number = nil
+
+  chat.say("折返线进站进路重置")
 end
 
 -- 上行
@@ -208,9 +210,10 @@ eventbus.on(devices.DETECTOR_X, "minecart", function(detector, type, en, pc, sc,
     end
   end
 
-  if (routes.stops(number, STATION_CODE .. "S")) then
+  if routes.stops(number, STATION_CODE .. "S") and S0106.state == 0 then
     S0106.state = 1
     S0106.number = number
+    chat.say(number .. "执行折返作业")
   end
 end)
 
