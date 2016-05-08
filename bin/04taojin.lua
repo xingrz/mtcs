@@ -103,6 +103,7 @@ function S0406.layout()
   -- 排列 S0406
   digital.set(devices.LOCK_S0405, false)
   digital.set(devices.LOCK_X0408, true)
+  digital.set(devices.LOCK_X0410, true)
 
   digital.set(devices.CONTROL_S0406, true)
   digital.set(devices.CONTROL_S0405, true)
