@@ -164,7 +164,7 @@ local X0410 = { state = 0 }
 function X0410.layout()
   digital.set(devices.LOCK_X0410, false)
   digital.set(devices.CONTROL_S0406, false)
-  signal.set(devices.C_X0408, signal.aspects.green)
+  signal.set(devices.C_X0410, signal.aspects.green)
 end
 
 function X0410.open()
@@ -291,35 +291,39 @@ eventbus.on(devices.S0406, "aspect_changed", function(r, aspect)
 end)
 
 detector.on(devices.DETECTOR_X0408, function(number)
-  if S0406.state == 2 then
+  if S0406.state == 3 then
     return
   end
 
   if X0408.state == 2 then
-    X0408.lock()
     X0408.state = 0
+    return
   end
+
+  X0408.state = 1
 
   if signal.is_green(devices.X0408) then
     X0408.layout()
     X0408.open()
     X0408.state = 2
+    chat.say(number .. " 通过 X0408")
   else
     X0408.lock()
+    chat.say(number .. " X0408 前等待")
   end
 
   -- TODO: X0408B
 end)
 
 eventbus.on(devices.X0408, "aspect_changed", function(receiver, aspect)
-  if X0408.state ~= 0 then
-    signal.green(devices.C_X0408, aspect)
-  end
-
-  if X0408.state == 1 and signal.is_green(devices.X0408) then
-    X0408.layout()
-    X0408.open()
-    X0408.state = 2
+  if X0408.state == 1 then
+    if signal.is_green(devices.X0408) then
+      X0408.layout()
+      X0408.open()
+      X0408.state = 2
+    else
+      X0408.lock()
+    end
   end
 end)
 
@@ -377,7 +381,7 @@ eventbus.on(devices.X0410, "aspect_changed", function(receiver, aspect)
     return
   end
 
-  signal.green(devices.C_X0408, aspect)
+  signal.green(devices.C_X0410, aspect)
 
   if X0410.state == 1 then
     countdown_x:go()
@@ -464,7 +468,7 @@ eventbus.on(chat.address, "chat_message", function(c, user, message)
     digital.set(devices.DOOR_X, false)
     X0410.layout()
     X0410.open()
-    X0408.state = 2
+    X0410.state = 2
   end
 
   if message == "S0412.open" then
