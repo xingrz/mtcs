@@ -297,6 +297,7 @@ detector.on(devices.DETECTOR_X0408, function(number)
 
   if X0408.state == 2 then
     X0408.state = 0
+    X0408.lock()
     return
   end
 
@@ -306,10 +307,8 @@ detector.on(devices.DETECTOR_X0408, function(number)
     X0408.layout()
     X0408.open()
     X0408.state = 2
-    chat.say(number .. " 通过 X0408")
   else
     X0408.lock()
-    chat.say(number .. " X0408 前等待")
   end
 
   -- TODO: X0408B
@@ -492,6 +491,13 @@ digital.set(devices.W0408, false)
 
 digital.set(devices.CONTROL_S0405, false)
 digital.set(devices.CONTROL_S0406, false)
+
+signal.set(devices.C_S0402, signal.aspects.red)
+signal.set(devices.C_X0403, signal.aspects.red)
+signal.set(devices.C_S0406, signal.aspects.red)
+signal.set(devices.C_X0408, signal.aspects.red)
+signal.set(devices.C_X0410, signal.aspects.red)
+signal.set(devices.C_S0412, signal.aspects.red)
 
 chat.setName("淘金")
 chat.setDistance(100)
