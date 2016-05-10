@@ -321,7 +321,9 @@ eventbus.on(devices.X0408, "aspect_changed", function(receiver, aspect)
       X0408.open()
       X0408.state = 2
     else
-      X0408.lock()
+      if S0406.state < 2 then
+        X0408.lock()
+      end
     end
   end
 end)
@@ -460,6 +462,12 @@ eventbus.on(chat.address, "chat_message", function(c, user, message)
 
   if message == "X0403.open" then
     digital.set(devices.LOCK_X0403, true)
+  end
+
+  if message == "X0408.open" then
+    X0408.layout()
+    X0408.open()
+    X0408.state = 2
   end
 
   if message == "X0410.open" then
