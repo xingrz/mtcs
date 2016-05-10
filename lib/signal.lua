@@ -42,7 +42,7 @@ function signal.green(address, aspect)
 end
 
 function signal.yellow(address, aspect)
-  if aspect == signal.aspects.yellow then
+  if aspect == signal.aspects.green then
     signal.set(address, signal.aspects.yellow)
   else
     signal.set(address, signal.aspects.red)
