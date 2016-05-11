@@ -77,7 +77,7 @@ function S0402B.open()
   chat.say("S0402B 进路开放")
 end
 
-function S0402B.reset()
+function S0402B.lock()
   digital.set(devices.LOCK_S0402, false)
 
   digital.set(devices.W0402, false)
@@ -191,20 +191,38 @@ end
 -- 上行进入存车线
 
 detector.on(devices.DETECTOR_S0402, function(number)
-  if S0402.state == 2 then
-    S0402.lock()
-    S0402.state = 0
+  -- 0: 复位
+  if S0402.state == 0 and S0402B.state == 0 then
+    if routes.stops(number, STATION_CODE .. "K") then
+      S0402B.state = 1
+    else
+      S0402.state = 1
+    end
   end
 
-  -- 忽略车尾
-  if S0402B.state ~= 0 then
+  ---- 正线
+
+  -- 1: 尝试排列进路
+  if S0402.state == 1 then
+    if signal.is_green(devices.S0402) then
+      S0402.layout()
+      S0402.open()
+      S0402.state = 2
+    else
+      S0402.lock()
+    end
     return
   end
 
-  -- 如果运行图包含存车线
-  if routes.stops(number, STATION_CODE .. "K") then
-    S0402B.state = 1
+  -- 2: 已排列进路
+  if S0402.state == 2 then
+    S0402.state = 3
+    return
+  end
 
+  ---- 侧线
+
+  if S0402B.state == 1 then
     if signal.is_green(devices.S0402B) then
       S0402B.layout()
       S0402B.open()
@@ -212,9 +230,19 @@ detector.on(devices.DETECTOR_S0402, function(number)
     else
       S0402.lock()
     end
-  else
-    S0402.state = 1
+    return
+  end
 
+  -- 2: 已排列进路
+  if S0402B.state == 2 then
+    S0402B.state = 3
+    return
+  end
+end)
+
+eventbus.on(devices.S0402, "aspect_changed", function(r, aspect)
+  -- 1: 尝试排列进路
+  if S0402.state == 1 then
     if signal.is_green(devices.S0402) then
       S0402.layout()
       S0402.open()
@@ -223,35 +251,41 @@ detector.on(devices.DETECTOR_S0402, function(number)
       S0402.lock()
     end
   end
-end)
 
-eventbus.on(devices.S0402, "aspect_changed", function(r, aspect)
-  if S0402.state ~= 0 then
-    signal.green(devices.C_S0402, aspect)
-  end
-
-  if S0402.state == 1 and signal.is_green(devices.S0402) then
-    S0402.layout()
-    S0402.open()
-    S0402.state = 2
+  -- 2: 已排列进路
+  -- 3: 已通过
+  if S0402.state >= 2 then
+    if not signal.is_green(devices.S0402) then
+      S0402.lock()
+      S0402.state = 0
+    end
   end
 end)
 
 eventbus.on(devices.S0402B, "aspect_changed", function(r, aspect)
-  if S0402B.state ~= 0 then
-    signal.yellow(devices.C_S0402, aspect)
+  -- 1: 尝试排列进路
+  if S0402B.state == 1 then
+    if signal.is_green(devices.S0402B) then
+      S0402B.layout()
+      S0402B.open()
+      S0402B.state = 2
+    else
+      S0402B.lock()
+    end
   end
 
-  if S0402B.state == 1 and signal.is_green(devices.S0402B) then
-    S0402B.layout()
-    S0402B.open()
-    S0402B.state = 2
+  -- 2: 已排列进路
+  -- 3: 已通过
+  if S0402B.state >= 2 then
+    signal.yellow(devices.C_S0402, aspect)
   end
 end)
 
 detector.on(devices.DETECTOR_S0406, function(number)
-  if S0402B.state == 2 then
-    S0402B.reset()
+  -- 2: 已排列进路
+  -- 3: 已通过
+  if S0402B.state >= 2 then
+    S0402B.lock()
     S0402B.state = 0
   end
 end)
@@ -291,7 +325,6 @@ eventbus.on(devices.S0406, "aspect_changed", function(r, aspect)
 end)
 
 detector.on(devices.DETECTOR_X0408, function(number)
-  -- MARK 1
   if S0406.state == 3 then
     return
   end
@@ -334,6 +367,8 @@ eventbus.on(devices.X0408, "aspect_changed", function(receiver, aspect)
     end
   end
 
+  -- 2: 已排列进路
+  -- 3: 已通过
   if X0408.state >= 2 then
     if not signal.is_green(devices.X0408) then
       X0408.lock()
@@ -463,10 +498,16 @@ eventbus.on(chat.address, "chat_message", function(c, user, message)
     S0401.open()
   end
 
+  if message == "S0402.open" then
+    S0402.layout()
+    S0402.open()
+    S0402.state = 3
+  end
+
   if message == "S0402B.open" then
     S0402B.layout()
     S0402B.open()
-    S0402B.state = 2
+    S0402B.state = 3
   end
 
   if message == "S0406.open" then
@@ -482,7 +523,7 @@ eventbus.on(chat.address, "chat_message", function(c, user, message)
   if message == "X0408.open" then
     X0408.layout()
     X0408.open()
-    X0408.state = 2
+    X0408.state = 3
   end
 
   if message == "X0410.open" then

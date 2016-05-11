@@ -13,7 +13,7 @@ digital_receiver_box    184a1f55-0f10-4a09-aa07-0cb098780aee    S0402
 digital_receiver_box    01505903-f86a-4d5a-b1d1-367adefdf1ba    S0402B
 redstone                e9172715-c61a-4701-97cd-5edd2447265a    C_S0402
 
-digital_detector        ad3f3efa-20e0-48e0-929c-95e408861a6f    DETECTOR_S0402
+digital_detector        da7811a9-2e47-4bae-b484-14623948d4c0    DETECTOR_S0402
 redstone                0700cab3-db94-4162-b1ff-f5ae413509b3    LOCK_S0402
 
 redstone                683a7047-fe31-4db0-ad02-fbef28365c75    W0402
