@@ -291,39 +291,53 @@ eventbus.on(devices.S0406, "aspect_changed", function(r, aspect)
 end)
 
 detector.on(devices.DETECTOR_X0408, function(number)
+  -- MARK 1
   if S0406.state == 3 then
     return
   end
 
-  if X0408.state == 2 then
-    X0408.state = 0
-    X0408.lock()
-    return
+  -- 0: 复位
+  if X0408.state == 0 then
+    X0408.state = 1
   end
 
-  X0408.state = 1
-
-  if signal.is_green(devices.X0408) then
-    X0408.layout()
-    X0408.open()
-    X0408.state = 2
-  else
-    X0408.lock()
-  end
-
-  -- TODO: X0408B
-end)
-
-eventbus.on(devices.X0408, "aspect_changed", function(receiver, aspect)
+  -- 1: 尝试排列进路
   if X0408.state == 1 then
     if signal.is_green(devices.X0408) then
       X0408.layout()
       X0408.open()
       X0408.state = 2
     else
-      if S0406.state < 2 then
-        X0408.lock()
-      end
+      X0408.lock()
+    end
+    return
+  end
+
+  -- 2: 已排列进路
+  if X0408.state == 2 then
+    X0408.state = 3
+    return
+  end
+
+  -- TODO: X0408B
+end)
+
+eventbus.on(devices.X0408, "aspect_changed", function(receiver, aspect)
+  -- 1: 尝试排列进路
+  if X0408.state == 1 then
+    if signal.is_green(devices.X0408) then
+      X0408.layout()
+      X0408.open()
+      X0408.state = 2
+    else
+      X0408.lock()
+    end
+  end
+
+  if X0408.state >= 2 then
+    if not signal.is_green(devices.X0408) then
+      X0408.lock()
+      X0408.state = 0
     end
   end
 end)
@@ -348,6 +362,7 @@ detector.on(devices.DETECTOR_X0410, function(number)
   -- 无论如何必须复位 S0406 进路
   S0406.lock()
 
+  -- MARK 1
   if S0406.state == 3 then
     S0406.state = 0
   end

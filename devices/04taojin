@@ -45,7 +45,7 @@ digital_receiver_box    783a649b-2edb-4b78-8e2c-38a6380818a4    X0408
 digital_receiver_box    1a8a6249-04db-4028-9e1d-8cd502d359c9    X0408B
 redstone                00fd1127-a33c-4224-a280-960cd3ed880c    C_X0408
 
-digital_detector        57ee0a92-ce78-4ed5-bc01-0c6f8358b96d    DETECTOR_X0408
+digital_detector        35bf5200-2987-42bc-a373-9ac04065b460    DETECTOR_X0408
 redstone                8bb863cb-c64e-4a22-94a3-aa2a7298fe7e    LOCK_X0408
 
 redstone                69b28b55-760f-485c-8bd4-5762e81b305f    W0406
