@@ -1,0 +1,70 @@
+digital_receiver_box    f774d746-c127-4746-8085-ef75f34c500c    S0801
+redstone                79ef254f-0d55-4b78-9618-708d0301d236    C_S0801
+redstone                18ada94f-4fd5-4b09-972a-50337b17b2da    LOCK_S0801
+digital_detector        9dbb692a-e8bd-4f5f-8ed8-436de8724561    DETECTOR_S0801
+
+digital_receiver_box    5b4ecf7d-867d-4cf1-b267-f58f539407f0    S0802
+redstone                007bac99-c4f5-4c73-96c9-89c6a30bad95    C_S0802
+redstone                0985d6ab-a2af-4afe-bd43-bb5783d3bb31    LOCK_S0802
+digital_detector        2b630997-22e7-4f0e-99c3-bb3e9ef8c74f    DETECTOR_S0802
+
+digital_receiver_box    0b9abd5c-5fbf-4635-9f27-d0f26957e6af    S0803
+redstone                101bc8ac-a183-4f7c-8d3a-b34f0fcbdc64    C_S0803
+redstone                f0faba42-213a-4957-b374-66ede464e1f4    LOCK_S0803
+digital_detector        cf88b3c2-10e8-4fc2-b81a-e232e4fb8e33    DETECTOR_S0803
+redstone                454c162c-f6b3-4d0b-aa59-69e9d91f8da5    CONTROL_K1
+
+digital_receiver_box    07b233cf-9100-4725-8377-69ceb8685757    X0804
+redstone                9232b88d-a30f-4b4e-86fd-2786fe08a7de    C_X0804
+redstone                2c4b6a37-d388-420d-8ee8-cf17cfc55a38    LOCK_X0804
+digital_detector        418dfb65-7f54-4aa5-b08c-168395c49fcc    DETECTOR_X0804
+
+redstone                dff884d3-a81f-46fa-a65d-9da2d102f210    LOCK_S0805
+digital_detector        251bc2cb-9f16-495a-ab2c-9d45c12eb61b    DETECTOR_S0805
+redstone                1114d3fc-ca75-486b-a8cd-2aa17ba7a92b    CONTROL_K2
+
+digital_receiver_box    2b2c35f0-db5f-4c27-a9dd-cecf6445ec37    X0807
+digital_receiver_box    8ce535a3-02c3-4270-ae50-0533b040a0bf    X0807K2
+redstone                194137dd-76ca-4884-abda-a4b660fb2be9    C_X0807
+redstone                b9e63e40-9d7f-4744-9b91-413a91bc45db    LOCK_X0807
+
+digital_receiver_box    eb4ffc2b-6d1d-4e37-8f94-26beeb9eebd9    X0809
+redstone                f934bada-1da3-41b9-8b07-2eadf49f2166    C_X0809
+
+digital_receiver_box    472a6e55-2788-47b7-b1c3-7d9312ac7a90    X0811
+redstone                97c4d470-3d7b-46c6-aedc-798fc08d9074    C_X0811
+redstone                4f646a85-f335-47e3-bc5a-0443ac468761    LOCK_X0811
+digital_detector        fb9f9a44-f023-44ac-a1bf-a6bc9bdef568    DETECTOR_X0811
+
+digital_receiver_box    d7f140b2-fb15-4e05-bbff-3a93b9b90f45    X0813
+redstone                9806dfac-79af-4b78-861e-a6d240af90db    C_X0813
+redstone                3a0f7e70-c799-46d6-a66c-f9ba69aecef7    LOCK_X0813
+digital_detector        8734e941-6e6d-4ae7-a4a1-c9dfc3c12a65    DETECTOR_X0813
+
+digital_receiver_box    c5d4cccc-a127-4614-b528-5f3853f20dc6    S0815
+digital_receiver_box    09dbf500-8a28-4e8a-bb3c-9b683aabb51a    S0815K1
+digital_receiver_box    6edc4602-484e-411d-b3b8-c3bafdf36a2e    S0815K2
+redstone                de4e1103-80c4-4302-90b7-e26a5f1da1bc    C_S0815
+redstone                b3a544d7-e48a-4670-bb23-d9c17facb6eb    LOCK_S0815
+digital_detector        5335b2f9-8e1e-4337-832f-5c06ba7354e9    DETECTOR_S0815
+
+redstone                0435bdb2-cec5-4fca-bf12-4f6dd60067aa    COUNTDOWN_S
+redstone                ae54b2d5-1ab6-4658-a4f6-2980b04245b1    COUNTDOWN_X
+
+redstone                6ca3fcf9-9f3d-4526-98d6-73f12e5ca84f    W0801
+redstone                6db4cf7e-df5b-4da8-b3e7-098a9bd53aa4    W0803
+
+redstone                867cab60-01ce-4a6d-a33f-f65df2e4a7a0    W0805
+redstone                412ee36b-0495-4ab7-9f31-6fff7329eb10    W0807
+
+redstone                37438e5b-6312-4704-b975-d43a23c025ea    W0809
+redstone                9ce9763f-a351-4b29-a3c5-4e81da7c44fb    W0811
+redstone                4ebb69ca-df03-4685-8a84-bbbedab527bf    W0813
+redstone                d1905da8-898a-463c-8076-0b11e69a1066    W0815
+redstone                a3b841ec-42fc-456b-9d2b-47177e4d799a    W0817
+redstone                315caee1-b748-47c9-8aba-a1dfd7bd6699    W0819
+redstone                2dd50098-22d0-4710-b867-de8dc66eef6e    W0821
+redstone                5af8c2e7-4685-4bef-a129-1186f92ca899    W0823
+
+redstone                cc714aa3-a610-4c17-ba73-741eeb897906    DOOR_S
+redstone                9dea2589-9329-4e7e-9b36-8b1b83d22739    DOOR_X
