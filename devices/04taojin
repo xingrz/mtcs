@@ -1,8 +1,8 @@
-redstone                57aa7021-c929-4ed3-a465-c5e1f7c5baac    COUNTDOWN_S
-redstone                2279f3ca-3547-4bff-a701-585cf83b4472    COUNTDOWN_X
+redstone                2b0851fd-3b43-41b7-a98f-f95e6b535b39    COUNTDOWN_S
+redstone                c3495e5f-5e7e-45eb-863e-86a5b7509efd    COUNTDOWN_X
 
 redstone                fd3597b1-31ac-4729-bf16-7584f21cfc0e    DOOR_S
-redstone                ddd73d29-3930-4d27-ad1c-bb27eb62dde6    DOOR_X
+redstone                bc24d309-20b1-4285-8dbf-f9ee5ce2139c    DOOR_X
 
 digital_receiver_box    ce866c37-c896-47be-a21b-ba578cd7efb8    S0401
 

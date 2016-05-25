@@ -8,8 +8,8 @@ redstone                9f12fcdf-6f01-4473-b691-f841f14b5931  LOCK_S0302
 redstone                74035664-8540-48a2-bd6e-a7e1328f978e  LOCK_X0303
 redstone                c4e1f34d-ac61-47a4-87af-5bcbca3a5f61  LOCK_X0304
 
-redstone                6fb42183-75ea-4a76-928c-f2b9b189e769  COUNTDOWN_S
-redstone                9962a77f-3363-4705-9b6f-0a9e40414f5c  COUNTDOWN_X
+redstone                66814a9e-989c-4204-9504-4ed4f386f6ec  COUNTDOWN_S
+redstone                0763a114-1437-4363-a302-b6d720fd88aa  COUNTDOWN_X
 
 digital_detector        b3f99557-d1f7-46aa-bd20-ffc3a8b6433e  DETECTOR_S
 digital_detector        e366dcf1-0c1d-4ba3-9cc5-812506021590  DETECTOR_X

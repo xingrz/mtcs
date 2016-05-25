@@ -384,6 +384,8 @@ end)
 -- 下行站台
 
 local countdown_x = countdown.bind(devices.COUNTDOWN_X, DURATION, function(delayed)
+  digital.set(devices.DOOR_X, false)
+
   if signal.is_green(devices.X0410) then
     X0410.state = 2
     X0410.open()
