@@ -4,6 +4,7 @@ local event = require("event")
 
 local countdown = require("countdown")
 local eventbus = require("eventbus")
+local detector = require("detector")
 local digital = require("digital")
 local signal = require("signal")
 
@@ -125,7 +126,7 @@ function S0709B.layout()
   digital.set(devices.LOCK_S0705, false)
   digital.set(devices.LOCK_X0707, true)
 
-  signal.set(devices.C_S0709, signal.aspects.green)
+  signal.set(devices.C_S0709, signal.aspects.yellow)
 
   chat.say("S0709B 进路排列完成")
 end
@@ -156,7 +157,7 @@ function X0707.layout()
   digital.set(devices.W0711, true)
   digital.set(devices.W0713, true)
 
-  signal.set(devices.C_X0707, signal.aspects.green)
+  signal.set(devices.C_X0707, signal.aspects.yellow)
 
   chat.say("X0707 进路排列完成")
 end
@@ -180,7 +181,8 @@ end
 --
 
 eventbus.on(devices.S0704, "aspect_changed", function(receiver, aspect)
-  digital.set(devices.LOCK_S0704, aspect == signal.aspects.green)
+  digital.set(devices.LOCK_S0704, signal.is_green(devices.S0704))
+  signal.green(devices.C_S0704, aspect)
 end)
 
 local countdown_s = countdown.bind(devices.COUNTDOWN_S, DURATION, function(delayed)
@@ -244,7 +246,7 @@ end)
 
 eventbus.on(devices.S0709, "aspect_changed", function(receiver, aspect)
   if S0709.state ~= 0 then
-    signal.set(devices.C_S0709, aspect)
+    signal.green(devices.C_S0709, aspect)
   end
 
   if S0709.state == 1 and aspect == signal.aspects.green then
@@ -256,7 +258,7 @@ end)
 
 eventbus.on(devices.S0709B, "aspect_changed", function(receiver, aspect)
   if S0709B.state ~= 0 then
-    signal.set(devices.C_S0709, aspect)
+    signal.yellow(devices.C_S0709, aspect)
   end
 
   if S0709B.state == 1 and aspect == signal.aspects.green then
@@ -291,7 +293,7 @@ end)
 
 eventbus.on(devices.X0707, "aspect_changed", function(receiver, aspect)
   if X0707.state ~= 0 then
-    signal.set(devices.C_X0707, aspect)
+    signal.yellow(devices.C_X0707, aspect)
   end
 
   if X0707.state == 2 then
@@ -303,7 +305,7 @@ end)
 
 eventbus.on(devices.X0711, "aspect_changed", function(receiver, aspect)
   if X0707.state <= 1 then
-    signal.set(devices.C_X0711, aspect)
+    signal.green(devices.C_X0711, aspect)
     digital.set(devices.LOCK_X0711, aspect == signal.aspects.green)
   end
 end)
@@ -354,7 +356,8 @@ eventbus.on(devices.X0702, "aspect_changed", function(receiver, aspect)
   if X0702.state == 1 then
     countdown_x:go()
   else
-    digital.set(devices.LOCK_X0702, aspect == signal.aspects.green)
+    digital.set(devices.LOCK_X0702, signal.is_green(devices.X0702))
+    signal.green(devices.C_X0702, aspect)
   end
 end)
 

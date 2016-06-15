@@ -9,7 +9,9 @@ digital_receiver_box    591bb01e-9a54-4a23-be95-baaec939d669    S0709B
 digital_receiver_box    042c02f7-4964-4c3d-a426-1bef7bde277f    X0711
 
 redstone                58fe97c5-5e6b-4ad1-89e4-abeeccc70e07    C_S0701
+redstone                6fe4b01f-b8a1-4858-9b8d-903bf30fa3f8    C_X0702
 redstone                82f663c9-5c55-4bc7-aa6b-8be56396d9b2    C_S0703
+redstone                ff78b709-5a28-40db-a4e2-68bbe85475fa    C_S0704
 redstone                16e39deb-d3b2-4b78-8e7e-dc7149fa0c9f    C_S0705
 redstone                4e46d8c8-a2a0-40f9-8a6a-6597b7884d7d    C_X0707
 redstone                6dc8b1c3-d10f-404d-8341-295bd089ddcd    C_S0709
@@ -38,8 +40,8 @@ redstone                6ad489c8-ecfc-403f-8ce7-342cdf41bde5    W0713
 redstone                7ada5d50-8a3f-4ca6-a37a-0307a3e20bf2    DOOR_S
 redstone                53eb66c1-dcff-40a5-afc8-0821b42ef1d0    DOOR_X
 
-redstone                42d4c680-3dd0-4926-9ec2-a02ec885d405    COUNTDOWN_S
-redstone                f1e5ab65-bdd9-4d4d-9a4c-5083c51f2300    COUNTDOWN_X
+redstone                028b304c-5606-49f0-850d-3ce8f97a39c4    COUNTDOWN_S
+redstone                ae0dd78d-688a-4452-84e3-ee28a0af06a8    COUNTDOWN_X
 
 digital_detector        0dcb73f5-28a9-4b8d-8a7b-d545b79fe0b1    DETECTOR_S
 digital_detector        81a5c594-f94d-4d65-b457-ff5e2f01367d    DETECTOR_X
@@ -47,5 +49,9 @@ digital_detector        81a5c594-f94d-4d65-b457-ff5e2f01367d    DETECTOR_X
 digital_detector        dd5ec30a-3df6-48c2-93f7-279619cc1745    DETECTOR_X0702
 digital_detector        652e7e2f-95e6-40fd-8437-d660c8439bc8    DETECTOR_S0705
 
-digital_detector        14e40a24-4de3-401f-816f-4ec38e155cb0    DETECTOR_S0701
+digital_detector        5e56db7a-d361-405f-b35e-76b5350d591f    DETECTOR_S0701
 digital_detector        18e2c892-2deb-44d9-8e2f-6c1fc38dbcb1    DETECTOR_S0703
+digital_detector        14e40a24-4de3-401f-816f-4ec38e155cb0    DETECTOR_S0703_RST
+digital_detector        ab72383c-4db9-4147-a1e7-02a86dc5fb58    DETECTOR_S0704
+
+digital_detector        f2493f3e-bb29-4f7f-a1cc-2f446c5baaa9    DETECTOR_S0711
